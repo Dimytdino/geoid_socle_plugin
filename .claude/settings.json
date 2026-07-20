@@ -1,0 +1,57 @@
+{
+  "permissions": {
+    "defaultMode": "default",
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(pytest:*)",
+      "Bash(python3 tests/*)",
+      "Bash(python3 scripts/packager_skill.py *)",
+      "Bash(python3 scripts/generer_doc_html.py *)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(ogrinfo:*)"
+    ],
+    "ask": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(pip install:*)",
+      "Bash(psql:*)",
+      "Bash(ogr2ogr:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)"
+    ],
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Bash(cat *.env*)",
+      "Bash(cat *.pem*)",
+      "Bash(cat *.key*)",
+      "Bash(*DROP TABLE*)",
+      "Bash(*DROP SCHEMA*)",
+      "Bash(*TRUNCATE*)",
+      "Read(./.env)",
+      "Read(./**/.env)",
+      "Read(./**/.env.*)",
+      "Read(./**/*.pem)",
+      "Read(./**/*.key)",
+      "Read(./**/secrets*)",
+      "Read(./**/credentials*)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)"
+    ]
+  },
+  "sandbox": {
+    "enabled": false,
+    "failIfUnavailable": false,
+    "filesystem": {
+      "denyRead": ["~/.ssh", "~/.aws"]
+    },
+    "network": {
+      "allowedDomains": ["github.com", "*.github.com", "pypi.org", "files.pythonhosted.org"]
+    }
+  }
+}

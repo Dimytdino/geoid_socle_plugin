@@ -1,0 +1,3 @@
+# Dependances de developpement du socle (les scripts et tests sont stdlib,
+# a une exception pres). Installer : pip install -r requirements-dev.txt
+markdown==3.6
