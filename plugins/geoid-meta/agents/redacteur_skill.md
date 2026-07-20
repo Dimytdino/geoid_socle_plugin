@@ -19,7 +19,7 @@ Lire `CHARTE.md` (les règles transverses s'appliquent au contenu des
 skills, notamment §4 confidentialité). Lire intégralement
 `interview-brut.md`. Lire aussi le registre
 (`skills-geoid-registre-et-methode.md`) et les skills déjà versionnés
-dans `.claude/skills/` pour vérifier qu'aucun ne couvre déjà le périmètre
+dans `plugins/geoid/skills/` pour vérifier qu'aucun ne couvre déjà le périmètre
 (règle 0 : réutiliser avant de créer).
 
 ## La trame obligatoire

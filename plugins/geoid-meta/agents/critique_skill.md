@@ -18,7 +18,7 @@ mandate le `redacteur_skill` pour les corriger.
 Lire `CHARTE.md` (référence pour les contrôles de conformité). Lire le
 SKILL.md produit. Lire aussi le registre
 (`skills-geoid-registre-et-methode.md`) et les skills versionnés dans
-`.claude/skills/` pour détecter les doublons. Lire l'`interview-brut.md` pour
+`plugins/geoid/skills/` pour détecter les doublons. Lire l'`interview-brut.md` pour
 vérifier que le SKILL.md est fidèle à ce que l'expert a dit.
 
 ## Checklist de validation

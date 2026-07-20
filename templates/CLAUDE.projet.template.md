@@ -10,12 +10,18 @@
 
 > ⚖️ Règles transverses : voir `CHARTE.md` (langue, SRC, sécurité,
 > méthode ADR, revue, comptes rendus). Non recopiées ici.
+>
+> 📦 Version socle — plugin geoid : {{VERSION_PLUGIN_GEOID}} (marketplace) ;
+> template résiduel : {{VERSION_TEMPLATE}} (dernier merge).
 
 ## 0. Orchestration (session principale)
 Tu coordonnes le travail substantiel ; tu traites directement le
-trivial. Délègue aux agents du §5 dès qu'une tâche est spécialisée,
-longue ou engageante (code de production, analyse, décision de
-conception, revue) ; réponds toi-même aux questions rapides et
+trivial. Tu **ne délègues qu'aux agents listés au §5** : les agents du
+plugin `geoid` sont tous techniquement invocables (`@geoid:<agent>`),
+mais la table §5 est **normative** — un agent absent du §5 n'est pas
+mobilisé sur ce projet, même s'il répond. Délègue dès qu'une tâche est
+spécialisée, longue ou engageante (code de production, analyse, décision
+de conception, revue) ; réponds toi-même aux questions rapides et
 micro-modifications — déléguer du trivial coûte plus qu'il ne rapporte.
 Avant une demande non triviale : analyse (1-2 phrases), agents
 mobilisés, mission de chacun. Un point `🔧 À ARBITRER` ne bloque que les

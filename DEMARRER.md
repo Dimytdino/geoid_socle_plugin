@@ -4,8 +4,8 @@ Ce guide explique comment créer et démarrer un projet à partir du socle
 `geoid-socle`. Du poste vide au premier livrable. Garde-le ouvert à côté
 de toi la première fois.
 
-> En une ligne : **template → `claude` → `/cadrer-projet` → trancher les
-> ADR → produire → revue avant de livrer.**
+> En une ligne : **template → `claude` → installer le plugin `geoid` →
+> `/cadrer-projet` → trancher les ADR → produire → revue avant de livrer.**
 
 ---
 
@@ -14,7 +14,7 @@ de toi la première fois.
 - Un terminal avec **Node.js** installé.
 - **Claude Code** : `npm install -g @anthropic-ai/claude-code`, puis
   `claude` une première fois pour se connecter avec le compte Claude TSE.
-- Accès au dépôt **TSE-Pole-Geomatique/geoid-socle** sur GitHub.
+- Accès au dépôt **TSE-Pole-Geomatique/geoid_socle_pugin** sur GitHub.
 - **Sous Windows** : travailler dans **WSL**, et garder les dépôts dans le
   home WSL (`~/...`), jamais dans `/mnt/c/...` (plus lent, problèmes de
   permissions).
@@ -30,7 +30,7 @@ claude --version    # doit répondre une version
 ## Étape 1 — Créer le dépôt du projet depuis le template
 
 Sur **GitHub** :
-1. Ouvrir le dépôt `geoid-socle`.
+1. Ouvrir le dépôt `geoid_socle_pugin`.
 2. Bouton **Use this template** → *Create a new repository*.
 3. Nommer le projet en minuscules-tirets (ex. `pipeline-rpg`,
    `widget-export-geojson`, `orion-poc`).
@@ -52,7 +52,15 @@ cd <mon-projet>
 claude
 ```
 Au premier lancement dans le dossier, accepter de faire confiance au dépôt
-(c'est notre template interne). Puis, dans la session :
+(c'est notre template interne).
+
+Installer ensuite le plugin d'équipe `geoid` depuis la marketplace du pôle
+(une fois par projet) — il apporte les agents, skills et commandes :
+```
+/plugin marketplace add TSE-Pole-Geomatique/geoid_socle_pugin
+/plugin install geoid@geoid-socle
+```
+Puis lancer le cadrage :
 ```
 /cadrer-projet
 ```
@@ -69,9 +77,12 @@ L'entretien guidé couvre, par petits groupes de questions :
 - **équipe humaine et niveaux** (le mentor s'en sert pour calibrer).
 
 À la fin : le `CLAUDE.md` du projet et `docs/suivi-projet.md` sont
-générés, et l'équipe d'agents adaptée à la famille est sélectionnée.
-**Quitter puis relancer `claude`** : le nouveau CLAUDE.md et l'équipe
-d'agents ne sont chargés qu'au démarrage d'une session.
+générés. Les agents viennent du plugin `geoid` (déjà installé) ; le
+cadrage inscrit la composition retenue au **§5 normatif** du CLAUDE.md —
+l'orchestrateur ne délègue qu'à ces agents — et copie la seule
+spécialisation du développeur retenue dans `.claude/agents/` du projet.
+**Quitter puis relancer `claude`** : le nouveau CLAUDE.md et la
+spécialisation ne sont chargés qu'au démarrage d'une session.
 
 > Familles et agents typiques :
 > - **étude / analyse SIG** → analyste_sig, revieweur, documentaliste, mentor
@@ -145,17 +156,27 @@ chaque micro-session.
 
 ## En cas de mise à jour du socle
 
-Le mode template ne propage pas les évolutions du socle tout seul. Une
-fois par projet, ajouter le socle comme source :
-```bash
-git remote add socle https://github.com/TSE-Pole-Geomatique/geoid-socle.git
-```
-Puis, à chaque évolution du socle :
-```bash
-git fetch socle && git merge socle/main
-```
-Résoudre les éventuels conflits sur le `CLAUDE.md` (il est propre au
-projet). La version du socle utilisée est notée dans `SOCLE_VERSION`.
+Depuis la 0.5.0, le socle se met à jour par **deux canaux** :
+
+- **Agents, skills et commandes** (plugin `geoid`) — par la marketplace :
+  ```
+  /plugin marketplace update geoid-socle
+  ```
+- **CHARTE, permissions, templates, spécialisations** (template résiduel) —
+  par merge git, une fois par projet ajouter le socle comme source :
+  ```bash
+  git remote add socle https://github.com/TSE-Pole-Geomatique/geoid_socle_pugin.git
+  ```
+  puis à chaque évolution :
+  ```bash
+  git fetch socle && git merge socle/main
+  ```
+  Résoudre les éventuels conflits sur le `CLAUDE.md` (il est propre au
+  projet).
+
+L'en-tête du `CLAUDE.md` porte les **deux versions** (plugin `geoid` /
+template résiduel) ; `/cloturer-session` signale un écart avec
+`SOCLE_VERSION`.
 
 ---
 
@@ -163,10 +184,10 @@ projet). La version du socle utilisée est notée dans `SOCLE_VERSION`.
 
 | Commande | Quand |
 |----------|-------|
-| `/cadrer-projet` | au démarrage d'un projet |
-| `/creer-skill` | (sur le dépôt du socle) pour fabriquer un skill (interview → rédaction → critique) |
-| `/cloturer-session` | en fin de séance utile |
-| `/revue-socle` | (sur le dépôt du socle) avant un push significatif |
+| `geoid:cadrer-projet` | au démarrage d'un projet |
+| `geoid:cloturer-session` | en fin de séance utile |
+| `geoid-meta:creer-skill` | (mainteneur du socle) fabriquer un skill (interview → rédaction → critique) |
+| `geoid-meta:revue-socle` | (mainteneur du socle) avant un push significatif |
 
 ## Les règles d'or (rappel)
 
