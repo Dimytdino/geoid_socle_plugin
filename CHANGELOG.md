@@ -102,8 +102,10 @@ Les projets non migrés continuent de fonctionner en mode « merge »
   publiée en **canal `latest`**.
 - **Passe de verrouillage des noms** menée (ADR-001 §7) : marketplace,
   plugins, commandes préfixées, agents, skills et frontière de découpage
-  gelés (audit sans écart) ; **tag `stable` coupé** — les projets
-  l'épinglent, le canal `latest` reste ouvert pour itérer le contenu.
+  gelés (audit sans écart) ; **tag `stable` coupé** (repère d'interface
+  gelée). En pratique les équipes installent l'état de `main` via
+  `/plugin marketplace add` ; les tags sont des repères d'historique, pas un
+  canal auto-sélectionné (ADR-001 §7, note pratique).
 
 ### À faire après cette version
 - Intégrer les REX pilotes (S-03) au fil de l'eau en 0.5.x (contenu
