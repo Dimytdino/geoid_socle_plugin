@@ -5,26 +5,31 @@ Lancer : python3 tests/test_socle_integrity.py
 import json, pathlib, re, subprocess, sys
 
 RACINE = pathlib.Path(__file__).resolve().parents[1]
-DOSSIER_SKILLS = RACINE / ".claude/skills"
+# Depuis la transposition en plugins (ADR-001 option D), agents / skills /
+# commandes vivent dans plugins/geoid et plugins/geoid-meta, plus dans .claude/.
+DOSSIER_SKILLS = RACINE / "plugins/geoid/skills"
+DOSSIERS_AGENTS = (RACINE / "plugins/geoid/agents", RACINE / "plugins/geoid-meta/agents")
+DOSSIER_AGENTS_META = RACINE / "plugins/geoid-meta/agents"
 echecs = []
 
 def verifier(cond, msg):
     if not cond:
         echecs.append(msg)
 
-# 1. Tous les agents ont un frontmatter name/description/tools et lisent la CHARTE
-for f in (RACINE / ".claude/agents").glob("*.md"):
-    t = f.read_text(encoding="utf-8")
-    for champ in ("name:", "description:", "tools:"):
-        verifier(champ in t, f"{f.name} : frontmatter sans '{champ}'")
-    verifier("CHARTE" in t, f"{f.name} : ne mentionne pas la lecture de CHARTE.md")
+# 1. Tous les agents (des deux plugins) ont un frontmatter name/description/tools
+#    et lisent la CHARTE.
+for dossier in DOSSIERS_AGENTS:
+    for f in dossier.glob("*.md"):
+        t = f.read_text(encoding="utf-8")
+        for champ in ("name:", "description:", "tools:"):
+            verifier(champ in t, f"{f.name} : frontmatter sans '{champ}'")
+        verifier("CHARTE" in t, f"{f.name} : ne mentionne pas la lecture de CHARTE.md")
 
-# 2. Les trois agents skill-builder sont presents en permanence dans le socle
-#    (la commande /creer-skill ne les active plus a chaud : les agents copies
-#    en cours de session ne seraient charges qu'au redemarrage).
+# 2. Les trois agents skill-builder sont presents dans le plugin geoid-meta
+#    (outillage mainteneur, non installe chez les equipes).
 for nom in ("interviewer_skill", "redacteur_skill", "critique_skill"):
-    verifier((RACINE / f".claude/agents/{nom}.md").exists(),
-             f"agent skill-builder absent du socle : {nom}.md")
+    verifier((DOSSIER_AGENTS_META / f"{nom}.md").exists(),
+             f"agent skill-builder absent de geoid-meta : {nom}.md")
 
 # 3. settings.json est un JSON valide, en mode 'default', sans interpreteur
 #    generaliste auto-autorise (un python:* en allow contourne le reste).
@@ -72,7 +77,7 @@ skills_versionnes = [c for c in fichiers_traques if c.endswith(".skill")]
 verifier(not skills_versionnes,
          f".skill versionne(s) (artefact genere, a exclure) : {skills_versionnes}")
 
-# 6. Chaque skill present dans .claude/skills/ a un SKILL.md avec frontmatter
+# 6. Chaque skill present dans plugins/geoid/skills/ a un SKILL.md avec frontmatter
 #    name/description, figure dans le tableau « Skills publiés » du registre,
 #    et n'apparait pas comme entree « a creer » (seuls les titres en gras en
 #    debut de ligne comptent — une simple mention en prose n'est pas une
@@ -111,6 +116,35 @@ for chemin in fichiers_traques:
         continue
     verifier(not PATTERN_SECRET.search(txt),
              f"{chemin} : possible secret en clair (a verifier manuellement)")
+
+# 8. Coherence de version (ADR-001c, alignement strict) : SOCLE_VERSION est la
+#    source de verite unique. La version de la marketplace (chaque entree de
+#    plugin) et celle de chaque manifeste plugin.json doivent lui etre egales.
+try:
+    socle_version = (RACINE / "SOCLE_VERSION").read_text(encoding="utf-8").strip()
+    verifier(bool(socle_version), "SOCLE_VERSION vide")
+
+    marketplace = json.loads((RACINE / ".claude-plugin/marketplace.json").read_text(encoding="utf-8"))
+    entrees = {p.get("name"): p.get("version") for p in marketplace.get("plugins", [])}
+    for nom in ("geoid", "geoid-meta"):
+        verifier(nom in entrees,
+                 f"marketplace.json : entree de plugin '{nom}' absente")
+        verifier(entrees.get(nom) == socle_version,
+                 f"marketplace.json : version de '{nom}' ({entrees.get(nom)}) "
+                 f"!= SOCLE_VERSION ({socle_version})")
+
+    for nom in ("geoid", "geoid-meta"):
+        manifeste = RACINE / f"plugins/{nom}/.claude-plugin/plugin.json"
+        verifier(manifeste.exists(), f"manifeste absent : {manifeste.relative_to(RACINE)}")
+        if manifeste.exists():
+            data = json.loads(manifeste.read_text(encoding="utf-8"))
+            verifier(data.get("name") == nom,
+                     f"{manifeste.relative_to(RACINE)} : name '{data.get('name')}' != '{nom}'")
+            verifier(data.get("version") == socle_version,
+                     f"{manifeste.relative_to(RACINE)} : version ({data.get('version')}) "
+                     f"!= SOCLE_VERSION ({socle_version})")
+except Exception as e:
+    echecs.append(f"coherence de version : {e}")
 
 if echecs:
     print("ECHECS d'integrite :")

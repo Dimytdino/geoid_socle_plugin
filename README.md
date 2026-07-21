@@ -1,43 +1,52 @@
 # GéoID — Socle commun de la bibliothèque d'agents Claude Code
 
-Dépôt **template** du pôle GéoID (TSE). Chaque nouveau projet du pôle part
-de ce squelette : il embarque la charte transverse, une équipe d'agents
-génériques, des spécialisations activables et une commande de cadrage qui
-génère la configuration propre au projet.
+Socle commun du pôle GéoID (TSE). Depuis la 0.5.0, il se diffuse par
+**deux canaux complémentaires** (ADR-001, option D) : une **marketplace de
+plugins Claude Code** (agents, skills, commandes) et un **dépôt template
+résiduel** (charte, permissions, `CLAUDE.md`, spécialisations) dont chaque
+projet part et que `/cadrer-projet` adapte.
 
-## Architecture en deux couches
+## Architecture : marketplace + template
 
-| Couche | Fichier(s) | Contenu |
-|--------|-----------|---------|
-| **1 — Socle** (ce dépôt) | `CHARTE.md`, `.claude/agents/`, `.claude/skills/`, `specialisations/`, `.claude/commands/`, `.claude/settings.json` | Règles transverses du pôle, rôles génériques, skills d'organisation, garde-fous |
-| **2 — Projet** | `CLAUDE.md` + `docs/suivi-projet.md` (générés) | Objectif, données, livrables, équipe d'agents retenue, ADR, journal des décisions ; suivi opérationnel à part |
+| Source | Fichier(s) | Contenu | Diffusion |
+|--------|-----------|---------|-----------|
+| **Plugin `geoid`** | `plugins/geoid/` (agents, skills, commandes) | Rôles génériques, skills d'organisation, `geoid:cadrer-projet` / `geoid:cloturer-session` | Marketplace (installée par les équipes) |
+| **Plugin `geoid-meta`** | `plugins/geoid-meta/` | Outillage mainteneur : skill-builder, `geoid-meta:creer-skill` / `geoid-meta:revue-socle` | Marketplace (installée par le seul mainteneur) |
+| **Template résiduel** | `CHARTE.md`, `CLAUDE.md`, `.claude/settings.json`, `templates/`, `specialisations/` | Règles transverses, permissions, squelette projet, variantes du développeur | Template GitHub + merge git |
+| **Projet** | `CLAUDE.md` + `docs/suivi-projet.md` (générés) | Objectif, données, livrables, équipe d'agents retenue, ADR, journal | Généré par `/cadrer-projet` |
 
 La CHARTE prime ; le CLAUDE.md projet ne contient que ce qui s'y ajoute.
+Un plugin ne peut fournir ni `CLAUDE.md`, ni `settings.json`, ni
+`CHARTE.md` : c'est la raison d'être des deux canaux (ADR-001 §4.4).
 
 ## Structure
 
 ```
 geoid-socle/
 ├── README.md
-├── CHARTE.md                        règles transverses du pôle (couche 1)
+├── CHARTE.md                        règles transverses du pôle (template résiduel)
 ├── CLAUDE.md                        bootstrap — remplacé par /cadrer-projet
+├── .claude-plugin/
+│   └── marketplace.json             la marketplace : publie geoid et geoid-meta
+├── plugins/
+│   ├── geoid/                       PLUGIN équipes (installé par les projets)
+│   │   ├── .claude-plugin/plugin.json
+│   │   ├── agents/                  rôles génériques
+│   │   │   ├── architecte.md        décisions de conception, ADR (lecture seule)
+│   │   │   ├── developpeur.md       tronc commun développement
+│   │   │   ├── analyste_sig.md      études et analyses géographiques
+│   │   │   ├── revieweur.md         revue avant livraison (ne produit pas)
+│   │   │   ├── documentaliste.md    métadonnées, dictionnaires, doc, changelog
+│   │   │   ├── chef_projet.md       backlog, risques, KPI, reporting
+│   │   │   └── mentor.md            pédagogie — explique, ne fait jamais à la place
+│   │   ├── commands/                geoid:cadrer-projet, geoid:cloturer-session
+│   │   └── skills/                  skills d'organisation, chargés par Claude Code
+│   └── geoid-meta/                  PLUGIN mainteneur (skills du socle)
+│       ├── .claude-plugin/plugin.json
+│       ├── agents/                  interviewer/redacteur/critique_skill
+│       └── commands/                geoid-meta:creer-skill, geoid-meta:revue-socle
 ├── .claude/
-│   ├── settings.json                permissions : mode default + garde-fous
-│   ├── agents/                      rôles génériques
-│   │   ├── architecte.md            décisions de conception, ADR (lecture seule)
-│   │   ├── developpeur.md           tronc commun développement
-│   │   ├── analyste_sig.md          études et analyses géographiques
-│   │   ├── revieweur.md             revue avant livraison (ne produit pas)
-│   │   ├── documentaliste.md        métadonnées, dictionnaires, doc, changelog
-│   │   ├── chef_projet.md           backlog, risques, KPI, reporting
-│   │   ├── mentor.md                pédagogie — explique, ne fait jamais à la place
-│   │   └── *_skill.md               interviewer/redacteur/critique — /creer-skill
-│   │                                (retirés des projets au cadrage)
-│   ├── commands/                    /cadrer-projet, /creer-skill,
-│   │                                /cloturer-session, /revue-socle
-│   └── skills/                      skills d'organisation — sources versionnées
-│                                    ET chargées par Claude Code (actives ici
-│                                    et dans tout projet créé du template)
+│   └── settings.json                permissions : mode default + garde-fous (hors plugin)
 ├── specialisations/                 variantes du développeur, activées au cadrage
 │   ├── developpeur_back_geo.md      PostGIS, APIs, chemin d'écriture
 │   ├── developpeur_front_carto.md   interfaces carto, édition client
@@ -57,16 +66,22 @@ geoid-socle/
 
 ## Démarrer un projet
 
-1. Créer un dépôt depuis ce template (GitHub → *Use this template*).
+1. Créer un dépôt depuis ce template (GitHub → *Use this template*) —
+   il fournit `CHARTE.md`, le `CLAUDE.md` bootstrap, `settings.json`,
+   `templates/` et `specialisations/`.
 2. `cd <projet> && claude`
-3. Lancer **`/cadrer-projet`** : entretien guidé, génération du
-   `CLAUDE.md` et de `docs/suivi-projet.md`, sélection des agents
-   pertinents (les spécialisations retenues sont copiées dans
-   `.claude/agents/`, les rôles inutiles retirés — le `mentor` reste
-   toujours).
-4. **Quitter et relancer `claude`** : CLAUDE.md et agents sont chargés
-   au démarrage de la session, pas à chaud.
-5. Si des points `🔧 À ARBITRER` existent : faire instruire les ADR par
+3. Installer le plugin d'équipe depuis la marketplace :
+   `/plugin marketplace add TSE-Pole-Geomatique/geoid_socle_pugin`, puis
+   `/plugin install geoid@geoid-socle`. Les agents, skills et commandes du
+   pôle deviennent disponibles (préfixés `geoid:`).
+4. Lancer **`/cadrer-projet`** : entretien guidé, génération du
+   `CLAUDE.md` et de `docs/suivi-projet.md`. La composition d'équipe
+   retenue est inscrite au **§5 normatif** du CLAUDE.md (l'orchestrateur ne
+   délègue qu'à ces agents) ; la seule spécialisation retenue est copiée
+   dans `.claude/agents/` du projet.
+5. **Quitter et relancer `claude`** : plugin, CLAUDE.md et spécialisation
+   sont chargés au démarrage de la session, pas à chaud.
+6. Si des points `🔧 À ARBITRER` existent : faire instruire les ADR par
    l'`architecte` avant les tâches qui en dépendent (le reste avance).
 
 ## Clôturer une session
@@ -123,8 +138,11 @@ Le mode `bypassPermissions` est réservé aux environnements isolés
 
 ## Maintenance du socle
 
-- **Version** : voir `SOCLE_VERSION` et `CHANGELOG.md`. Chaque projet note
-  dans son `CLAUDE.md` la version du socle utilisée.
+- **Version** : voir `SOCLE_VERSION` et `CHANGELOG.md`. Depuis la 0.5.0,
+  `SOCLE_VERSION` = version des deux plugins = version de la marketplace
+  (alignement strict). Chaque projet note dans l'en-tête de son `CLAUDE.md`
+  **deux champs** : version du plugin `geoid` installé (marketplace) et
+  version du template résiduel mergé.
 - **Tests** : `python3 tests/test_packager_skill.py`,
   `python3 tests/test_socle_integrity.py` et
   `python3 tests/test_generer_doc_html.py` avant push. La CI
@@ -144,15 +162,31 @@ Le mode `bypassPermissions` est réservé aux environnements isolés
 
 - Toute évolution de la CHARTE ou d'un agent générique se fait **ici**,
   par pull request.
-- **Propager une mise à jour du socle vers un projet existant** (le mode
-  template ne le fait pas tout seul) — une fois par projet :
-  `git remote add socle <url-du-depot-geoid-socle>`, puis à chaque mise à
-  jour : `git fetch socle && git merge socle/main` (résoudre les conflits
-  éventuels sur le CLAUDE.md, qui est propre au projet). C'est
-  semi-automatique ; la migration en plugin restera la vraie solution.
-- Quand plusieurs projets seront actifs, envisager la migration du socle
-  en **plugin Claude Code** installé centralement, pour que les mises à
-  jour se propagent sans copie.
+- **Diffusion depuis la 0.5.0 : deux canaux** (ADR-001, option D). Le dépôt
+  du socle est **lui-même la marketplace** (`.claude-plugin/marketplace.json`)
+  et publie deux plugins :
+  - **`geoid`** (`plugins/geoid/`) — agents, skills et commandes du pôle,
+    installés par les équipes projet ;
+  - **`geoid-meta`** (`plugins/geoid-meta/`) — outillage du mainteneur
+    (skill-builder, `/revue-socle`, `/creer-skill`), installé par le seul
+    mainteneur.
+
+  Ces composants se propagent **par mise à jour de la marketplace**, plus
+  par merge git. Les manifestes (`plugin.json`) et les entrées de la
+  marketplace portent la même version que `SOCLE_VERSION` (alignement
+  strict, ADR-001c — verrouillé par `test_socle_integrity.py`).
+- **Ce qui reste hors plugin** (un plugin ne peut pas les fournir) :
+  `CHARTE.md`, `CLAUDE.md`, `settings.json`/permissions, `templates/` et
+  `specialisations/`. Ils continuent de se propager **par template +
+  `/cadrer-projet`**, donc par merge git : `git remote add socle
+  <url-du-depot-geoid-socle>` une fois, puis `git fetch socle && git merge
+  socle/main` à chaque évolution (résoudre les conflits sur le `CLAUDE.md`,
+  propre au projet). Le durcissement des permissions n'est donc **pas**
+  propagé par la marketplace.
+- **Migrer un projet existant** vers le mode plugin : suivre la checklist
+  de la section 0.5.0 du `CHANGELOG.md` (installer la marketplace,
+  supprimer les copies locales devenues des doublons, renseigner la ligne
+  de version à deux champs, relancer Claude Code).
 
 ## Conventions de contribution
 

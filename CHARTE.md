@@ -35,10 +35,10 @@ appartiennent à l'une des quatre familles suivantes :
 ## 3. Référentiel géographique
 
 > Master/dérivé : la CHARTE est la source de vérité des §3 et §4. Le
-> skill `conventions-sig-tse` (diffusé dans claude.ai **et** chargé par
-> Claude Code via `.claude/skills/`) en est une copie dérivée : toute
-> modification ici impose de régénérer le skill et de re-packager le
-> `.skill` (responsabilité du mainteneur du socle).
+> skill `conventions-sig-tse` (diffusé dans claude.ai **et** embarqué par
+> le plugin `geoid` sous `plugins/geoid/skills/`) en est une copie
+> dérivée : toute modification ici impose de régénérer le skill et de
+> re-packager le `.skill` (responsabilité du mainteneur du socle).
 
 - **SRC de stockage et de calcul** : Lambert-93 — **EPSG:2154**.
 - **SRC d'affichage web** : Web Mercator — **EPSG:3857**.

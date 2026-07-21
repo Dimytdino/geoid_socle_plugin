@@ -6,7 +6,7 @@ description: >
   spécifique au socle. À lancer depuis le dépôt geoid-socle.
 ---
 
-# Revue du socle — /revue-socle
+# Revue du socle — geoid-meta:revue-socle
 
 Le socle encadre les projets ; il doit respecter sa propre exigence.
 Cette commande se lance avant tout push significatif : nouvel agent,

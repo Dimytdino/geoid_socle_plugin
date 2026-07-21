@@ -3,6 +3,86 @@
 Format inspiré de Keep a Changelog. La version vit aussi dans `SOCLE_VERSION`.
 Chaque projet note la version du socle utilisée dans son `CLAUDE.md`.
 
+## 0.5.0 — 2026-07
+Transposition du socle en **plugins Claude Code** (ADR-001, option D ;
+bascule immédiate tranchée le 2026-07-20, ADR-001 §6). Le dépôt devient
+lui-même la marketplace. Les agents, skills et commandes du pôle ne sont
+plus diffusés par copie git mais installés/activés par la marketplace ;
+CHARTE, `settings.json`, `CLAUDE.md`, templates et spécialisations restent
+diffusés par le template résiduel (un plugin ne peut pas les fournir —
+ADR-001 §4.4).
+
+### Ajouté
+- **Marketplace** `.claude-plugin/marketplace.json` : deux plugins publiés
+  par le dépôt du socle.
+- **Plugin `geoid`** (`plugins/geoid/`) — équipes projet : agents
+  (`architecte`, `developpeur`, `analyste_sig`, `revieweur`,
+  `documentaliste`, `chef_projet`, `mentor`), skills du pôle
+  (`conventions-sig-tse`, `environnement-arcgis-tse`, `fme-tse`) et
+  commandes `geoid:cadrer-projet`, `geoid:cloturer-session`.
+- **Plugin `geoid-meta`** (`plugins/geoid-meta/`) — mainteneur du socle :
+  agents skill-builder (`interviewer_skill`, `redacteur_skill`,
+  `critique_skill`) et commandes `geoid-meta:creer-skill`,
+  `geoid-meta:revue-socle`. Non installé chez les équipes : le retrait des
+  skill-builder au cadrage disparaît par construction.
+- **Bloc de cohérence de version** dans `test_socle_integrity.py`
+  (ADR-001c, alignement strict) : `SOCLE_VERSION` = version de la
+  marketplace = version de chaque manifeste `plugin.json`.
+
+### Modifié
+- **`/cadrer-projet` réécrit** (ADR-001 §4.3) : plus de suppression
+  d'agents génériques ni de retrait des skill-builder sur disque ; la
+  composition d'équipe retenue devient la **table normative du §5** du
+  CLAUDE.md (tous les agents du plugin restant techniquement invocables,
+  c'est le §5 qui fait foi) ; renfort au §0 du template « ne délègue qu'aux
+  agents du §5 » ; copie de la seule spécialisation retenue conservée.
+- **Template CLAUDE projet** : nouvelle ligne d'en-tête à **deux champs**
+  de version (ADR-001c) — plugin `geoid` (marketplace) et template
+  résiduel (dernier merge) ; `/cloturer-session` signale un écart.
+- **Agents, skills et commandes déplacés** de `.claude/` vers
+  `plugins/geoid/` et `plugins/geoid-meta/`. Le socle lui-même conserve
+  `.claude/settings.json` (permissions, hors plugin).
+
+### Migration des projets existants (checklist)
+Par projet, une fois `geoid` disponible dans la marketplace :
+1. **Installer la marketplace puis le plugin** : `/plugin marketplace add
+   TSE-Pole-Geomatique/geoid_socle_pugin`, puis `/plugin install
+   geoid@geoid-socle`. (Le mainteneur du socle installe en plus
+   `geoid-meta`.)
+2. **Supprimer de `.claude/` les copies locales** désormais fournies par le
+   plugin — agents génériques (`.claude/agents/`), commandes
+   (`.claude/commands/cadrer-projet.md`, `cloturer-session.md`) et skills
+   du pôle (`.claude/skills/`). Sinon doublons : un `/cadrer-projet` local
+   non préfixé coexisterait avec `geoid:cadrer-projet`, et les fichiers
+   divergeraient silencieusement.
+3. **Conserver** : `CLAUDE.md`, `settings.json` (+ `.local.json`), `docs/`,
+   la spécialisation du développeur copiée au cadrage
+   (`.claude/agents/developpeur_*.md`), `CHARTE.md`.
+4. **Mettre à jour l'en-tête du `CLAUDE.md`** : renseigner la ligne à deux
+   champs de version (plugin `geoid` installé / template résiduel mergé) ;
+   vérifier que le §5 (équipe d'agents) est bien traité comme normatif.
+5. **Relancer Claude Code** : plugin et CLAUDE.md ne sont pris en compte
+   qu'au démarrage.
+6. Vérifier l'absence de doublons (`geoid:` vs commande/agent local
+   homonyme) avant de reprendre le travail.
+
+Les projets non migrés continuent de fonctionner en mode « merge »
+(option A) : pas de bascule forcée. Fin de support de l'option A proposée
+à l'issue du cycle **0.6.0** (ADR-001 §6).
+
+### À faire après cette version
+- **Tag `0.5.0`** et publication de la marketplace (canal `latest` /
+  pré-release — ADR-001a garde-fou).
+- **Passe de verrouillage des noms** (identités marketplace/plugins,
+  commandes préfixées, agents, déclencheurs de skills, frontière de
+  découpage) avant de couper le tag `stable` que les projets épinglent.
+- Réécrire complètement README/DEMARRER si des zones restent en formulation
+  « migration future » après cette version.
+- Intégrer les REX pilotes (S-03) au fil de l'eau en 0.5.x, sans coût de
+  renommage.
+- Trancher ADR-001d (périmètre MCP au cadrage) → étape MCP de
+  `/cadrer-projet`, gabarit `.mcp.json`.
+
 ## 0.4.0 — 2026-07
 Durcissement issu d'un audit externe du socle (exécutabilité réelle des
 skills et agents, permissions, contexte permanent). Faits vérifiés sur la
@@ -110,6 +190,7 @@ documentation Claude Code avant chaque changement.
 
 Journal des passages `/revue-socle` (date · périmètre · verdict).
 
+- **2026-07-20** · Version 0.5.0 (bascule en plugins : marketplace `.claude-plugin/`, plugins `geoid`/`geoid-meta`, alignement strict des versions, `/cadrer-projet` réécrit, checklist de migration, README/DEMARRER/bootstrap) · **APPROUVÉ** (réserve levée). 1re passe SOUS RÉSERVE — après le déplacement `.claude/skills/` → `plugins/geoid/skills/`, l'emplacement des skills restait écrit `.claude/skills/` dans `geoid-meta:creer-skill` (workflow inopérant), les agents `redacteur_skill`/`critique_skill`, le registre et la CHARTE §3 ; corrigés (+ titres de commandes préfixés, références GitHub `geoid_socle_pugin` dans DEMARRER, section « Nettoyage » de `creer-skill` réalignée). Versions alignées 0.5.0 partout, 3 tests verts.
 - **2026-07-02** · Version 0.4.0 (skills → `.claude/skills/`, agents skill-builder permanents, permissions durcies, CHARTE §5 scoppée aux dépendances, suivi projet externalisé, test d'intégrité réécrit, CI) · **APPROUVÉ** (réserves levées). 1re passe SOUS RÉSERVE — deux références périmées : README « Clôturer une session » citait encore le CLAUDE.md pour la roadmap/risques ; note master/dérivé CHARTE §3 non mise à jour après le déplacement des skills et déclaration dérivée absente du SKILL.md `conventions-sig-tse` ; corrigées (+ suggestions appliquées : bootstrap CLAUDE.md, mémo DEMARRER, tableau des couches et arborescence README, deny `cat *.env*`, CI filtrée sur main). 3 tests verts.
 - **2026-06-24** · Amendement CHARTE §3 (SRC d'un format d'échange prime ; GeoJSON = 4326) + skill `conventions-sig-tse` 1.0→1.1 + bump socle 0.3.1 · **APPROUVÉ** (réserve levée). 1re passe SOUS RÉSERVE — registre des skills affichait encore « Dernière revue : — » malgré la règle « régénérer à chaque amendement » ; corrigé (registre mis à jour : version 1.1, dernière revue 2026-06). Aucune contradiction introduite (front_carto §3857 = affichage, distinct du SRC de sortie) ; 3 tests verts.
 - **2026-06-19** · Ajout `scripts/generer_doc_html.py` + test, templates `fiche-outil`/`style-doc-tse.css`, skill brouillon `fme-tse`, MAJ README/registre, retrait du `.pyc` suivi · **APPROUVÉ** (2e passe). 1re passe SOUS RÉSERVE — bloquant : `test_socle_integrity.py` scannait le disque au lieu de l'index git (faux positif sur `.skill` ignoré + `.pyc` tracké) ; corrigé (filtrage `git ls-files`, `.pyc` retiré de l'index), 3 tests verts.

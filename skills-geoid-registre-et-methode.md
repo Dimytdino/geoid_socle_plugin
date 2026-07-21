@@ -36,17 +36,18 @@ Une connaissance vit à un seul étage.
 | `fme-tse` | 0.1 (brouillon) | 2026-06 | Kilian (contenu conventionnel) | Pilote « documentation FME » (ADR-002) — partie « structure de fiche » issue de la fiche covisibilité ; conventions de nommage/emplacement/staging/journalisation **à compléter par Kilian** | À passer en `/revue-socle` |
 | `environnement-arcgis-tse` | 0.1 | 2026-06 | Fateh + Dimitry | Interview Dimitry (2026-06, `/creer-skill`) ; faits d'environnement recoupés avec ADR-001 du dépôt `nemelios_ags` (Enterprise 11.3, ExB Dev Edition 1.17, EPSG:2154). **À confirmer avec Fateh** : nombre d'applications métier, liste des intervenants ArcGIS, procédure VDI pas-à-pas | 2026-06 (création, critique APPROUVÉ) |
 
-> Les skills sources vivent dans `.claude/skills/<nom>/` : c'est à la fois
-> le dossier versionné (source de vérité) et l'emplacement chargé par
-> Claude Code — ils sont donc actifs dans le socle et dans tout projet créé
-> depuis le template. Pour les utilisateurs claude.ai (chat), le canal est
-> distinct : packager avec `scripts/packager_skill.py` puis faire publier
-> le `.skill` par l'admin de l'organisation. Le fichier `.skill` est un
-> **artefact généré**, non versionné (cf. `.gitignore`) — re-packager à
-> chaque publication.
-> ⚠️ Un skill encore en brouillon (non passé en `/revue-socle`) est déjà
-> actif dans Claude Code dès qu'il est dans `.claude/skills/` : y laisser
-> uniquement des contenus qu'on assume de voir appliqués.
+> Les skills sources vivent dans `plugins/geoid/skills/<nom>/` : c'est à la
+> fois le dossier versionné (source de vérité) et le contenu embarqué par
+> le plugin `geoid` — ils sont donc actifs dans tout projet où le plugin
+> est installé (diffusion par la marketplace, non plus par copie template).
+> Pour les utilisateurs claude.ai (chat), le canal est distinct : packager
+> avec `scripts/packager_skill.py` puis faire publier le `.skill` par
+> l'admin de l'organisation. Le fichier `.skill` est un **artefact
+> généré**, non versionné (cf. `.gitignore`) — re-packager à chaque
+> publication.
+> ⚠️ Un skill encore en brouillon (non passé en `geoid-meta:revue-socle`)
+> devient actif dès que le plugin `geoid` qui l'embarque est installé et
+> rechargé : n'y laisser que des contenus qu'on assume de voir appliqués.
 
 **Quand une revue d'un skill publié est obligatoire :** amendement de la
 CHARTE (pour les skills dérivés), retour d'expérience d'un pilote, erreur

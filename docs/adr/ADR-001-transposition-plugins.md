@@ -139,7 +139,70 @@ Les noms publiés (`geoid:cadrer-projet`, noms d'agents, déclencheurs de skills
 | ADR | Sujet | Tâches bloquées en attendant | Statut |
 |-----|-------|------------------------------|--------|
 | ADR-001 | Choix de l'architecture de diffusion (A/B/C/**D recommandée**) et principe du séquencement en deux temps | — (les tâches restent conditionnées au calendrier ADR-001a : statu quo jusqu'aux REX pilotes) | **Décidé : option D** (2026-07-03) |
-| ADR-001a | Critères et calendrier de bascule : combien de REX pilotes, quels critères de gel de l'interface (noms de commandes/agents/skills), date butoir de migration des projets | Publication de la marketplace ; tag 0.5.0 ; checklist de migration des projets existants | À décider (dépend d'ADR-001) |
+| ADR-001a | Critères et calendrier de bascule : combien de REX pilotes, quels critères de gel de l'interface (noms de commandes/agents/skills), date butoir de migration des projets | — (débloque S-04, S-05) | **Décidé : bascule immédiate** (2026-07-20) — voir §6 |
 | ADR-001b | Sort définitif des spécialisations : maintien côté cadrage vs plugins par famille — à réexaminer si les spécialisations s'enrichissent (hooks, scripts) | — | **Décidé via l'option D** : maintien côté cadrage (2026-07-03) |
-| ADR-001c | Politique de version : alignement strict `SOCLE_VERSION` = version des deux plugins (recommandé) vs versionnage indépendant de `geoid-meta` | Premier tag de la marketplace ; extension de `test_socle_integrity.py` ; format des mentions de version dans le CLAUDE.md projet | À décider |
+| ADR-001c | Politique de version : alignement strict `SOCLE_VERSION` = version des deux plugins (recommandé) vs versionnage indépendant de `geoid-meta` | — (débloque S-06) | **Décidé : alignement strict** (2026-07-20) — voir §6 |
 | ADR-001d | Périmètre des propositions MCP au cadrage : Postgres/PostGIS RO seul au départ ? conditions exactes FME Flow (2026.2) ; critères de sortie de veille pour ArcGIS Location Services | Ajout de l'étape MCP à `/cadrer-projet` ; gabarit `.mcp.json` projet ; consigne « identifiants RO, jamais en clair » dans le template | À décider |
+
+## 6. Décisions ADR-001a et ADR-001c (2026-07-20)
+
+Instruites par l'`architecte`, validées par D. Grohan. Fait nouveau
+déclencheur : **table rase acceptée** — pas/peu de projets aval actifs en
+régime « clone » à protéger.
+
+### ADR-001a — **Bascule immédiate** (candidat 0.5.0)
+- Le motif dominant du séquencement en deux temps (protéger des projets
+  aval en cours de migration, §4.5) tombe avec la table rase. L'interface
+  réellement nouvelle est minime : les noms d'agents, skills et commandes
+  existent déjà et sont éprouvés en option A ; seuls sont neufs les
+  préfixes `geoid:` / `geoid-meta:` (imposés par l'outil, fait 3), les
+  identifiants des deux plugins + de la marketplace, et la frontière de
+  découpage entre plugins.
+- Le contenu (prompts, skills, commandes) reste corrigeable après
+  publication par versions mineures de la marketplace : les REX pilotes
+  s'intègrent en 0.5.x **sans coût de renommage**. La bascule est donc
+  découplée de la consolidation des REX (S-03).
+- **Garde-fou** : publier d'abord sur un canal `latest` (pré-release) ;
+  ne couper le tag `stable` — celui que les projets épinglent — qu'après
+  une **passe de verrouillage des noms**.
+- **À figer avant publication** : identité marketplace + identifiants de
+  plugins (`geoid`, `geoid-meta`) ; noms de commandes préfixés
+  (`geoid:cadrer-projet`, `geoid:cloturer-session`,
+  `geoid-meta:creer-skill`, `geoid-meta:revue-socle`) ; noms d'agents ;
+  identifiants/déclencheurs de skills ; frontière de découpage entre les
+  deux plugins.
+- **Encore mobile après publication** (versions mineures, sans
+  renommage) : contenu des agents/skills/commandes ; ajouts ; tout le
+  versant template (hors plugin par construction, fait 5) ; propositions
+  MCP (ADR-001d).
+- **Date butoir** : nouveaux projets via marketplace dès 0.5.0. Projets
+  résiduels — migration via checklist (§4.2) **ou** gel/archivage en
+  option A ; fin de support de l'option A proposée à l'issue du cycle
+  **0.6.0** (l'enjeu R-01 du double régime étant devenu marginal).
+- **Débloque** : S-04 (tranché) et S-05.
+
+### ADR-001c — **Alignement strict des versions**
+- `SOCLE_VERSION` = version `geoid` = version `geoid-meta` = tag
+  marketplace. Source de vérité unique (conforme au §4.1) ; le « bump à
+  vide » d'un plugin sans diff est un coût accepté (mainteneur et release
+  uniques).
+- **`test_socle_integrity.py`** : ajouter un bloc de cohérence de version
+  — `SOCLE_VERSION` == version de la marketplace == version déclarée pour
+  chaque entrée de plugin == version de chaque manifeste
+  (`.claude-plugin/plugin.json` de `geoid` et `geoid-meta`) ; en option,
+  entrée de tête du `CHANGELOG.md`. Un seul nombre confronté à tous les
+  manifestes.
+- **CLAUDE.md projet** : deux champs (la version de `geoid-meta`
+  n'apparaît pas côté projet, ce plugin n'y étant pas installé) —
+  `Version socle — plugin geoid : X.Y.Z (marketplace) ; template
+  résiduel : X.Y.Z (dernier merge).` `/cloturer-session` signale un écart
+  entre les deux champs et un retard vis-à-vis de `SOCLE_VERSION` courant.
+- **Débloque** : S-06.
+
+### Impact sur le registre des risques
+- **R-01** (dérive de version en régime merge) : se referme plus tôt.
+- **R-02** (gel prématuré de l'interface) : la mitigation change de
+  nature — ce n'est plus le report qui couvre le risque mais le
+  verrouillage délibéré des noms + le canal `latest`/`stable`.
+- **R-03** (REX tardifs → bascule sine die) : disparaît (bascule
+  découplée des REX).

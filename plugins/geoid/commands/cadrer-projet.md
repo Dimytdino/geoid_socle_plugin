@@ -4,11 +4,17 @@ description: >
   CLAUDE.md à partir du template et activer les agents pertinents.
 ---
 
-# Cadrage d'un projet GéoID
+# Cadrage d'un projet GéoID — geoid:cadrer-projet
 
 Tu vas cadrer ce projet en suivant strictement les étapes ci-dessous.
 Lis d'abord `CHARTE.md` (elle s'applique intégralement et n'a pas à être
 recopiée dans le CLAUDE.md du projet) et `templates/CLAUDE.projet.template.md`.
+
+Les agents du pôle sont fournis par le plugin `geoid` (installé via la
+marketplace) : ils sont invocables sous la forme `@geoid:<agent>`. Ce
+cadrage ne les copie pas dans le projet ; il définit, au §5 du CLAUDE.md,
+la table **normative** des agents que l'orchestrateur est autorisé à
+mobiliser (voir Étape 2).
 
 ## Étape 1 — Entretien
 Pose les questions par petits groupes (pas tout d'un coup), reformule les
@@ -46,7 +52,11 @@ réponses pour validation. Sujets à couvrir :
 9. **Contraintes** : sécurité, accès, dépendances à d'autres équipes.
 
 ## Étape 2 — Sélection des agents
-Propose la composition d'équipe selon la famille (l'utilisateur valide) :
+Propose la composition d'équipe selon la famille (l'utilisateur valide).
+Les agents génériques ci-dessous sont fournis par le plugin `geoid` et
+invocables sous la forme `@geoid:<agent>` ; les `developpeur_*` sont des
+spécialisations copiées dans le projet (voir plus bas), invocables sans
+préfixe.
 - **Étude / analyse** : `analyste_sig`, `revieweur`, `documentaliste`,
   `mentor` (+ `architecte` si choix structurants de méthode/données).
 - **Pipeline de données** : `architecte`, `developpeur_etl`, `revieweur`,
@@ -57,18 +67,29 @@ Propose la composition d'équipe selon la famille (l'utilisateur valide) :
 - **Pilotage / transverse** : `chef_projet`, `documentaliste`, `mentor`.
 
 Puis applique :
-- copie les spécialisations retenues depuis `specialisations/` vers
-  `.claude/agents/` ;
-- supprime de `.claude/agents/` les agents génériques non retenus
-  (`mentor` reste toujours), ainsi que les agents skill-builder
-  (`interviewer_skill`, `redacteur_skill`, `critique_skill` — les skills
-  se créent dans le dépôt du socle, pas dans les projets) ;
-- si une spécialisation du développeur est active, supprime le
-  `developpeur` générique sauf besoin résiduel identifié.
+- **La composition retenue devient la table normative du §5** du CLAUDE.md
+  (Étape 3). Tous les agents du plugin `geoid` restent techniquement
+  invocables : on ne peut pas les retirer d'un plugin. C'est donc le §5 qui
+  fait foi — l'orchestrateur ne délègue **qu'aux** agents qui y figurent
+  (renforcé au §0 du template). Il n'y a plus de suppression d'agents
+  génériques sur disque, ni de retrait des agents skill-builder : ces
+  derniers vivent dans le plugin `geoid-meta`, non installé chez les
+  équipes, donc absents des projets par construction.
+- **Spécialisation du développeur** : copie la seule spécialisation
+  retenue depuis `specialisations/` (dépôt template résiduel, présent dans
+  le projet) vers `.claude/agents/` du projet. Elle devient un agent local
+  du projet (invocable `@<nom>`, sans préfixe `geoid:`) et peut être
+  affinée à la stack exacte du projet. Si une spécialisation est retenue,
+  ne liste pas le `developpeur` générique au §5 sauf besoin résiduel
+  identifié.
 
-⚠️ Ces changements d'équipe ne prennent **pas** effet dans la session en
-cours : les agents sont chargés au démarrage de Claude Code. C'est prévu
-par l'étape 4 (relance).
+_(Étape MCP à venir — ADR-001d : le cadrage proposera plus tard la
+configuration de serveurs MCP dans le `.mcp.json` du projet selon la
+famille. Point encore ouvert, ne rien ajouter pour l'instant.)_
+
+⚠️ La spécialisation copiée ne prend **pas** effet dans la session en
+cours : les agents locaux sont chargés au démarrage de Claude Code. C'est
+prévu par l'étape 4 (relance).
 
 ## Étape 3 — Génération du CLAUDE.md et du suivi
 Remplace le `CLAUDE.md` du dépôt par
@@ -76,6 +97,13 @@ Remplace le `CLAUDE.md` du dépôt par
 l'entretien, et crée `docs/suivi-projet.md` depuis
 `templates/suivi-projet.template.md` (roadmap initiale = premières
 tâches identifiées pendant l'entretien). Règles :
+- renseigne la ligne de version en en-tête (ADR-001c) : version du plugin
+  `geoid` installée (marketplace, = contenu de `SOCLE_VERSION` au moment
+  de la bascule) et version du template résiduel mergée (dernier merge du
+  dépôt template dans le projet) ;
+- reporte la composition validée à l'Étape 2 dans la table `§5 Équipe
+  d'agents` : elle est **normative** (l'orchestrateur ne délègue qu'aux
+  agents qui y figurent) ;
 - ne recopie pas la CHARTE : référence-la ;
 - chaque décision déjà actée va directement au journal des décisions ;
 - chaque point ouvert apparaît en `🔧 À ARBITRER` avec son ADR-00X **et
