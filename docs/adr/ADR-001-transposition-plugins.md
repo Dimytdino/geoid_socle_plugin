@@ -142,7 +142,7 @@ Les noms publiés (`geoid:cadrer-projet`, noms d'agents, déclencheurs de skills
 | ADR-001a | Critères et calendrier de bascule : combien de REX pilotes, quels critères de gel de l'interface (noms de commandes/agents/skills), date butoir de migration des projets | — (débloque S-04, S-05) | **Décidé : bascule immédiate** (2026-07-20) — voir §6 |
 | ADR-001b | Sort définitif des spécialisations : maintien côté cadrage vs plugins par famille — à réexaminer si les spécialisations s'enrichissent (hooks, scripts) | — | **Décidé via l'option D** : maintien côté cadrage (2026-07-03) |
 | ADR-001c | Politique de version : alignement strict `SOCLE_VERSION` = version des deux plugins (recommandé) vs versionnage indépendant de `geoid-meta` | — (débloque S-06) | **Décidé : alignement strict** (2026-07-20) — voir §6 |
-| ADR-001d | Périmètre des propositions MCP au cadrage : Postgres/PostGIS RO seul au départ ? conditions exactes FME Flow (2026.2) ; critères de sortie de veille pour ArcGIS Location Services | Ajout de l'étape MCP à `/cadrer-projet` ; gabarit `.mcp.json` projet ; consigne « identifiants RO, jamais en clair » dans le template | À décider |
+| ADR-001d | Périmètre des propositions MCP au cadrage : Postgres/PostGIS RO seul au départ ? conditions exactes FME Flow (2026.2) ; critères de sortie de veille pour ArcGIS Location Services | Ajout de l'étape MCP à `/cadrer-projet` ; gabarit `.mcp.json` projet ; consigne « identifiants RO, jamais en clair » dans le template | **Décidé** (2026-07-21) — voir §8 |
 
 ## 6. Décisions ADR-001a et ADR-001c (2026-07-20)
 
@@ -248,3 +248,55 @@ en 0.5.x sans coût de renommage.
 gel est désormais délibéré et documenté, l'interface est majoritairement
 éprouvée depuis l'option A, et le canal `latest` absorbe les itérations de
 contenu.
+
+## 8. Décision ADR-001d (2026-07-21) — périmètre MCP au cadrage
+
+Instruite par l'`architecte` (recherche factuelle multi-sources, faits
+datés/sourcés), validée par D. Grohan. Dernier point ouvert de l'ADR-001 :
+il est désormais clos.
+
+**Faits vérifiés (2026-07-21)** :
+- Le serveur MCP Postgres « de référence » (`modelcontextprotocol`) est
+  **archivé (2025-05-29)**, non maintenu et historiquement vulnérable à
+  l'injection SQL → écarté. Des alternatives maintenues avec read-only
+  paramétrable existent (`crystaldba/postgres-mcp` mode `restricted`,
+  Supabase, Neon, HenkDz). PostGIS étant du SQL, un serveur SQL générique
+  read-only suffit ; les serveurs « spatial-aware » dédiés sont immatures.
+- **FME Flow comme serveur MCP** est officiel, natif et GA, mais **requiert
+  FME 2026.2** (source primaire `fme.safe.com`) ; le transformer MCPCaller
+  dès 2026.1 ; inclus sans surcoût, auth OAuth 2.0.
+- **ArcGIS Location Services MCP (Esri)** : réel mais **en bêta** (endpoint
+  distant hébergé Esri, clé API, facturation à la consommation, pas de GA) ;
+  Early Adopter annoncé le 2026-06-29.
+
+**Décisions** :
+1. **Périmètre proposé au cadrage** (le cadrage propose, l'utilisateur
+   valide ; jamais dans le plugin) :
+   - **Étude / analyse** : **PostGIS lecture seule**, serveur par défaut
+     **`crystaldba/postgres-mcp`** (`--access-mode=restricted`), avec un
+     **rôle PostgreSQL dédié read-only**.
+   - **Pipeline** : **FME Flow MCP**, **conditionné à FME ≥ 2026.2 vérifié
+     au cadrage**. Fait d'environnement : le pôle est en **FME 2025.2** au
+     2026-07 → FME MCP **non proposé** jusqu'à montée de version (point à
+     rouvrir alors).
+   - **Développement / pilotage** : aucun MCP par défaut.
+2. **Esri ArcGIS Location Services** : **hors périmètre par défaut**,
+   maintenu en veille (S-08). **Critères de sortie de veille** : (a) passage
+   en GA annoncé par Esri ; (b) modèle de coût/quotas clair et compatible
+   budget ; (c) besoin projet réel (géocodage/routing) ; (d) clé API gérée
+   comme secret (variable d'environnement). Réévaluation à chaque signal.
+3. **Sécurité (non négociable, CHARTE §4)** : identifiants **read-only**
+   uniquement (rôle dédié, moindre privilège) ; **jamais de secret en
+   clair** dans `.mcp.json` → **variables d'environnement** (`${VAR}`, que
+   Claude Code interpole) ; le fichier versionné ne porte que des
+   placeholders.
+4. **Mise en œuvre** (portée par S-07) : étape « 2 bis — Serveurs MCP »
+   ajoutée à `geoid:cadrer-projet` ; gabarit
+   `templates/mcp.projet.template.json` ; consigne de sécurité MCP dans le
+   template `CLAUDE.projet` ; livrés en **0.5.1** (contenu itéré sur le
+   canal `latest`, sans renommage — les noms restent gelés, ADR §7).
+
+**Impact risque** : **R-05** (identifiants en clair dans `.mcp.json`) —
+mitigé et refermable : gabarit sans secret + `${VAR}` + rôle RO + consigne
+au template et dans le cadrage. Reste à surveiller à l'usage (R-05 → en voie
+de fermeture).

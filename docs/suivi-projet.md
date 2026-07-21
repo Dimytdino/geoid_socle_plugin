@@ -16,11 +16,15 @@ Tenu à jour par le `chef_projet` (ou l'orchestrateur s'il n'est pas
 activé), notamment via `/cloturer-session`. L'humain valide ce qui
 entre ici (cf. CHARTE §4 et §5).
 
-Version courante du socle : **0.5.0** (bascule en plugins — PR #1 mergée
-sur `main` en `a4df160` le 2026-07-21, tag `0.5.0` poussé, pré-release
-publiée en canal `latest`, tag `stable` coupé après verrouillage des noms
-le 2026-07-21). Marketplace `geoid-socle` → plugins `geoid` / `geoid-meta`.
-Tests d'intégrité verts (dont le bloc de cohérence de version, ADR-001c).
+Version courante du socle (publiée) : **0.5.0** (bascule en plugins — PR #1
+mergée sur `main` en `a4df160` le 2026-07-21, tag `0.5.0` poussé, pré-release
+canal `latest`, tag `stable` coupé après verrouillage des noms).
+Marketplace `geoid-socle` → plugins `geoid` / `geoid-meta`.
+
+**0.5.1 en préparation** (S-07, périmètre MCP au cadrage — ADR-001d) : étape
+MCP dans `geoid:cadrer-projet`, gabarit `.mcp.json`, consigne de sécurité au
+template. Itération de contenu sur le canal `latest` (noms gelés). Reste :
+revue socle + commit/PR + tag `0.5.1`. Tests d'intégrité verts (10 blocs).
 
 ## 1. Roadmap / backlog
 
@@ -32,7 +36,7 @@ Tests d'intégrité verts (dont le bloc de cohérence de version, ADR-001c).
 | S-04 | Trancher ADR-001a : critères et calendrier de bascule | Haute | architecte + D. Grohan | Terminé (bascule immédiate, ADR-001 §6) | 2026-07-20 |
 | S-05 | Publication marketplace + plugins `geoid`/`geoid-meta`, tag 0.5.0, réécriture `/cadrer-projet`, checklist de migration | Haute | mainteneur / developpeur | Terminé (2026-07-21) — PR #1 mergée, tag `0.5.0` + pré-release `latest`, noms verrouillés, tag `stable` coupé (ADR-001 §7) | 2026-07-21 |
 | S-06 | Trancher ADR-001c : politique de version | Moyenne | architecte + D. Grohan | Terminé (alignement strict, ADR-001 §6) — mise en œuvre (bloc test d'intégrité, mentions de version CLAUDE.md) portée par S-05 | 2026-07-20 |
-| S-07 | Trancher ADR-001d : périmètre MCP au cadrage (PostGIS RO — étude/analyse ; FME Flow MCP conditionné à FME 2026.2 — pipeline ; puis étape MCP dans `/cadrer-projet`, gabarit `.mcp.json`, consigne « identifiants RO, jamais en clair ») | Moyenne | architecte + D. Grohan | À faire | — |
+| S-07 | Trancher ADR-001d : périmètre MCP au cadrage (PostGIS RO — étude/analyse ; FME Flow MCP conditionné à FME 2026.2 — pipeline ; puis étape MCP dans `/cadrer-projet`, gabarit `.mcp.json`, consigne « identifiants RO, jamais en clair ») | Moyenne | architecte + D. Grohan | Terminé (2026-07-21) — ADR-001d tranché (ADR-001 §8) ; étape MCP + gabarit + consigne livrés en 0.5.1 | 2026-07-21 |
 | S-08 | Veille ArcGIS Location Services MCP (bêta Esri du 2026-06-29) : critères de sortie de veille | Basse | mainteneur | En cours | — |
 | S-09 | Migrer les projets existants vers le mode plugin (checklist CHANGELOG 0.5.0 : install marketplace, suppression des doublons `.claude/` locaux, en-tête de version, relance) — outil `scripts/verifier_migration_plugin.py` fourni. La propagation par merge (0.4.0) est supersédée sauf pour le template résiduel (CHARTE, settings, spécialisations) | Haute | mainteneur / équipes | À faire — outil de vérification livré (2026-07-21) ; migration par projet à mener | — |
 | S-10 | Re-packager et faire republier `conventions-sig-tse.skill` dans claude.ai (master/dérivé) | Moyenne | mainteneur | À faire | — |
@@ -49,7 +53,7 @@ Tests d'intégrité verts (dont le bloc de cohérence de version, ADR-001c).
 | R-02 | Gel de l'interface plugin (préfixes `geoid:`/`geoid-meta:`, découpage) avant stabilisation → renommage coûteux | Moyenne | Élevé | Verrouillage des noms mené et documenté (ADR-001 §7, 2026-07-21) ; tag `stable` coupé ; canal `latest` ouvert pour itérer le contenu en 0.5.x sans renommage ; noms majoritairement éprouvés depuis l'option A | Fermé (2026-07-21) |
 | R-03 | REX pilotes tardifs ou incomplets → bascule repoussée sine die | Moyenne | Moyen | Bascule découplée des REX (ADR-001a) : les REX s'intègrent en 0.5.x par versions mineures. Risque levé | Fermé (2026-07-20) |
 | R-04 | Post-bascule : désynchronisation des deux canaux de diffusion (marketplace vs template résiduel — CHARTE, settings, spécialisations) | Moyenne | Moyen | Extension du test d'intégrité (ADR-001c) ; signalement de décalage de versions par `/cloturer-session` (ADR-001 §4.1) | Ouvert |
-| R-05 | MCP au cadrage : chaînes de connexion ou identifiants en clair dans le `.mcp.json` projet (violation CHARTE §4) | Faible | Élevé | Cadrer dans ADR-001d : identifiants lecture seule + variables d'environnement, consigne explicite dans le template | Ouvert |
+| R-05 | MCP au cadrage : chaînes de connexion ou identifiants en clair dans le `.mcp.json` projet (violation CHARTE §4) | Faible | Élevé | ADR-001d tranché (§8) : gabarit `.mcp.json` sans secret + placeholders `${VAR}` + rôle BD read-only + consigne au template et dans le cadrage. Test d'intégrité (bloc 10) vérifie l'absence d'identifiant en dur dans le gabarit | En voie de fermeture (à surveiller à l'usage) |
 
 ## 3. Suivi des revues
 
@@ -76,18 +80,20 @@ verdict **APPROUVÉ** (réserves levées).
 | 2026-07-20 | Calendrier de bascule (ADR-001a) | **Bascule immédiate** (candidat 0.5.0) : publication marketplace + plugins sans attendre les REX ; canal `latest` puis tag `stable` après verrouillage des noms ; fin de support option A visée après 0.6.0 | Fait nouveau : table rase (pas de projets aval à protéger) → le motif dominant du séquencement tombe ; interface neuve minime (préfixes imposés) ; contenu corrigeable par versions mineures. Détail : ADR-001 §6 |
 | 2026-07-20 | Politique de version (ADR-001c) | **Alignement strict** : `SOCLE_VERSION` = version `geoid` = version `geoid-meta` = tag marketplace ; bloc de cohérence ajouté à `test_socle_integrity.py` ; CLAUDE.md projet porte deux champs (plugin `geoid` / template résiduel) | Source de vérité unique (ADR-001 §4.1) ; garantie vérifiable par le test d'intégrité ; « bump à vide » d'un plugin accepté (mainteneur/release uniques). Détail : ADR-001 §6 |
 | 2026-07-21 | Verrouillage des noms + coupe du tag `stable` (ADR-001a) | **Noms gelés** : marketplace `geoid-socle`, plugins `geoid`/`geoid-meta`, commandes préfixées, agents, skills, frontière de découpage (liste : ADR-001 §7). Tag `stable` coupé ; canal `latest` ouvert pour le contenu | Audit de cohérence sans écart ; noms majoritairement éprouvés en option A ; le gel porte sur les identifiants, pas sur le contenu (itérable en 0.5.x). Ferme R-02. Détail : ADR-001 §7 |
+| 2026-07-21 | Périmètre MCP au cadrage (ADR-001d) | Cadrage propose (utilisateur valide) : **PostGIS RO** (`crystaldba/postgres-mcp` restricted, rôle BD dédié) en étude/analyse ; **FME Flow MCP** conditionné à **FME ≥ 2026.2** (pôle en 2025.2 → non proposé pour l'instant) en pipeline ; **Esri** hors périmètre (bêta, veille S-08, critères de sortie définis). Sécurité : RO + `${VAR}`, jamais de secret en clair. Livré en 0.5.1 (étape MCP `cadrer-projet`, gabarit `.mcp.json`, consigne template) | Faits vérifiés (serveur PG de référence archivé/vulnérable → écarté ; FME Flow MCP GA mais requiert 2026.2 ; Esri en bêta sans GA). Dernier point ADR-001 clos. Détail : ADR-001 §8 |
 
 ## 5. 🔧 À arbitrer (points ouverts)
 
 Source de vérité : tableau §5 de
 `docs/adr/ADR-001-transposition-plugins.md` (avec la colonne « Tâches
-bloquées »). Ouverts au 2026-07-20 :
+bloquées »). **Aucun point ADR-001 ouvert au 2026-07-21** : l'ADR-001 est
+entièrement instruit.
 
-- **ADR-001d** — périmètre des propositions MCP au cadrage → bloque S-07.
+Clos :
+- **ADR-001** (option D), **ADR-001b** (spécialisations côté cadrage) — 2026-07-03.
+- **ADR-001a** (bascule immédiate) → débloque S-04, S-05 ; **ADR-001c**
+  (alignement strict des versions) → débloque S-06 — 2026-07-20 (ADR-001 §6).
+- **ADR-001d** (périmètre MCP au cadrage) → débloque S-07 — 2026-07-21
+  (ADR-001 §8).
 
-Clos le 2026-07-20 (détail ADR-001 §6) :
-- **ADR-001a** — bascule immédiate (candidat 0.5.0) → débloque S-04, S-05.
-- **ADR-001c** — alignement strict des versions → débloque S-06.
-
-Conformément à la CHARTE §5, seules les tâches listées ci-dessus sont
-bloquées ; le reste du backlog avance.
+Conformément à la CHARTE §5, le backlog avance sans point bloquant ADR.

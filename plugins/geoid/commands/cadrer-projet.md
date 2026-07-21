@@ -83,13 +83,46 @@ Puis applique :
   ne liste pas le `developpeur` générique au §5 sauf besoin résiduel
   identifié.
 
-_(Étape MCP à venir — ADR-001d : le cadrage proposera plus tard la
-configuration de serveurs MCP dans le `.mcp.json` du projet selon la
-famille. Point encore ouvert, ne rien ajouter pour l'instant.)_
-
 ⚠️ La spécialisation copiée ne prend **pas** effet dans la session en
 cours : les agents locaux sont chargés au démarrage de Claude Code. C'est
 prévu par l'étape 4 (relance).
+
+## Étape 2 bis — Serveurs MCP du projet (`.mcp.json`) — ADR-001d
+Selon la famille, **propose** (l'utilisateur valide) la configuration de
+serveurs MCP dans le `.mcp.json` **du projet** — jamais dans le plugin :
+les chaînes de connexion sont propres au projet. C'est le point le plus
+sensible du cadrage ; la CHARTE §4 s'applique intégralement.
+
+Propositions par famille :
+- **Étude / analyse** → **PostGIS en lecture seule**. Serveur recommandé :
+  `crystaldba/postgres-mcp` en mode `--access-mode=restricted` (transactions
+  read-only + garde-fous anti-écriture + timeouts). Exiger un **rôle
+  PostgreSQL dédié read-only** (CONNECT + USAGE + SELECT), jamais un compte
+  applicatif ou d'administration. Le gabarit lit la connexion depuis la
+  variable d'environnement **`POSTGIS_RO_URI`** (jamais écrite dans le
+  fichier versionné).
+- **Pipeline de données** → **FME Flow MCP**, **uniquement si la version FME
+  du projet est ≥ 2026.2** (« FME Flow as an MCP Server » n'existe pas
+  avant ; le transformer MCPCaller dès 2026.1). Le vérifier explicitement
+  au cadrage — ne pas supposer. Au 2026-07 le pôle est en **FME 2025.2** :
+  dans ce cas, **ne pas proposer** FME MCP et noter un point `🔧 À ARBITRER`
+  à rouvrir après montée de version. Auth OAuth 2.0, transport distant.
+- **Développement applicatif / pilotage** → aucun MCP proposé par défaut.
+- **ArcGIS Location Services (Esri)** → **hors périmètre par défaut** (bêta,
+  pas de GA, coût à la consommation). Maintenu en veille (suivi S-08) ; ne
+  le configurer que si un besoin projet réel le justifie **et** que la clé
+  API est gérée comme un secret (variable d'environnement).
+
+Règles de sécurité (non négociables, CHARTE §4) :
+- **Jamais de secret en clair** dans `.mcp.json` : identifiants et chaînes
+  de connexion via **variables d'environnement** (`${VAR}`, interpolées par
+  Claude Code). Le fichier versionné ne contient que des placeholders.
+- **Lecture seule / moindre privilège** : rôle dédié RO, aucun scope large.
+- Partir du gabarit `templates/mcp.projet.template.json` ; n'y garder que
+  les serveurs validés ; consigner le choix au journal des décisions.
+
+Comme les agents, un serveur MCP configuré n'est actif qu'au **redémarrage**
+de Claude Code (étape 4).
 
 ## Étape 3 — Génération du CLAUDE.md et du suivi
 Remplace le `CLAUDE.md` du dépôt par

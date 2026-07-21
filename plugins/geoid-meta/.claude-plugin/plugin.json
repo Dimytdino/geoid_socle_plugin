@@ -1,7 +1,7 @@
 {
   "name": "geoid-meta",
   "description": "Outillage du mainteneur du socle GéoID : création et revue de skills (agents skill-builder et commandes dédiées).",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "author": {
     "name": "Pôle GéoID — TSE",
     "email": "dimitry.grohan@tse.energy"
