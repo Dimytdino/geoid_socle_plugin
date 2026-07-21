@@ -70,18 +70,21 @@ Les projets non migrés continuent de fonctionner en mode « merge »
 (option A) : pas de bascule forcée. Fin de support de l'option A proposée
 à l'issue du cycle **0.6.0** (ADR-001 §6).
 
+### Publication (2026-07-21)
+- PR #1 mergée sur `main` (`a4df160`) ; **tag `0.5.0`** poussé ; pré-release
+  publiée en **canal `latest`**.
+- **Passe de verrouillage des noms** menée (ADR-001 §7) : marketplace,
+  plugins, commandes préfixées, agents, skills et frontière de découpage
+  gelés (audit sans écart) ; **tag `stable` coupé** — les projets
+  l'épinglent, le canal `latest` reste ouvert pour itérer le contenu.
+
 ### À faire après cette version
-- **Tag `0.5.0`** et publication de la marketplace (canal `latest` /
-  pré-release — ADR-001a garde-fou).
-- **Passe de verrouillage des noms** (identités marketplace/plugins,
-  commandes préfixées, agents, déclencheurs de skills, frontière de
-  découpage) avant de couper le tag `stable` que les projets épinglent.
-- Réécrire complètement README/DEMARRER si des zones restent en formulation
-  « migration future » après cette version.
-- Intégrer les REX pilotes (S-03) au fil de l'eau en 0.5.x, sans coût de
-  renommage.
+- Intégrer les REX pilotes (S-03) au fil de l'eau en 0.5.x (contenu
+  itérable sans coût de renommage, les noms étant gelés).
 - Trancher ADR-001d (périmètre MCP au cadrage) → étape MCP de
-  `/cadrer-projet`, gabarit `.mcp.json`.
+  `geoid:cadrer-projet`, gabarit `.mcp.json`.
+- Propager aux projets existants (S-09) via la checklist de migration
+  ci-dessus.
 
 ## 0.4.0 — 2026-07
 Durcissement issu d'un audit externe du socle (exécutabilité réelle des
