@@ -240,9 +240,19 @@ marketplace).
 agents/skills/commandes, les ajouts, le versant template, les propositions
 MCP (ADR-001d). Le gel porte sur les identifiants, pas sur le texte.
 
-**Conséquence** : le tag **`stable`** est coupé. Les projets épinglent
-désormais `stable` ; le canal `latest` reste ouvert pour itérer le contenu
-en 0.5.x sans coût de renommage.
+**Conséquence** : le tag **`stable`** est coupé, marquant l'interface gelée.
+Le canal `latest` reste ouvert pour itérer le contenu en 0.5.x sans coût de
+renommage.
+
+**Note pratique (2026-07-21)** — vérifié contre la doc Claude Code : le
+`stable`/`latest` est un **modèle conventionnel**, pas un canal
+auto-sélectionné par l'outil. En pratique, `/plugin marketplace add <repo>`
+récupère l'état de `main`, et la version réellement installée est celle du
+champ `version` des entrées de `marketplace.json`. Les tags `stable` /
+`0.5.x` sont donc des **repères d'historique** (et une base de pin explicite
+par `ref` si un jour on en a besoin) ; ils ne changent pas ce que reçoit une
+équipe qui ajoute la marketplace. Choix acté : rester simple — `main` fait
+foi pour ce que les équipes installent.
 
 **Impact risque** : **R-02** (gel prématuré de l'interface) — fermé : le
 gel est désormais délibéré et documenté, l'interface est majoritairement
