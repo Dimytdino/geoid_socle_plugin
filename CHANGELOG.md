@@ -63,8 +63,11 @@ Par projet, une fois `geoid` disponible dans la marketplace :
    vérifier que le §5 (équipe d'agents) est bien traité comme normatif.
 5. **Relancer Claude Code** : plugin et CLAUDE.md ne sont pris en compte
    qu'au démarrage.
-6. Vérifier l'absence de doublons (`geoid:` vs commande/agent local
-   homonyme) avant de reprendre le travail.
+6. **Vérifier** avec `python3 scripts/verifier_migration_plugin.py` (à
+   lancer dans le dépôt du projet) : il liste les doublons plugin/local
+   restants et contrôle l'en-tête de version du `CLAUDE.md` (sortie non
+   nulle tant que la migration est incomplète). Le lancer jusqu'à
+   « migration propre » avant de reprendre le travail.
 
 Les projets non migrés continuent de fonctionner en mode « merge »
 (option A) : pas de bascule forcée. Fin de support de l'option A proposée
