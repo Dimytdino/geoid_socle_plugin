@@ -41,10 +41,10 @@ Tests d'intégrité verts (10 blocs).
 | S-08 | Veille ArcGIS Location Services MCP (bêta Esri du 2026-06-29) : critères de sortie de veille | Basse | mainteneur | En cours | — |
 | S-09 | Migrer les projets existants vers le mode plugin | Haute | mainteneur / équipes | Sans objet (2026-07-21) — aucun projet aval à migrer (table rase confirmée, cf. ADR-001a). Outillage conservé (checklist CHANGELOG 0.5.0 + `scripts/verifier_migration_plugin.py`) au cas où un ancien clone referait surface | — |
 | S-10 | Re-packager et faire republier `conventions-sig-tse.skill` dans claude.ai (master/dérivé) | Moyenne | mainteneur | À faire | — |
-| S-11 | Activer le sandbox OS (`settings.json`, bubblewrap) après test sur un poste WSL2 | Moyenne | mainteneur | À faire | — |
+| S-11 | Activer le sandbox OS (`settings.json`, bubblewrap) après test sur un poste WSL2 | Moyenne | mainteneur | Bloqué (2026-07-21) — `bubblewrap` non installable sur le poste courant (droits admin/sudo indisponibles). Squelette prêt dans `settings.json` ; reste `apt install bubblewrap` + test du confinement + `enabled:true`, sur un poste avec droits admin (ou via l'IT). Ne PAS passer `enabled:true` sans bwrap (`failIfUnavailable:false` → sandbox silencieusement inopérant) | — |
 | S-12 | Arbitrer le statut des skills brouillons dans `plugins/geoid/skills/` (actifs dès que le plugin est installé/rechargé — à confirmer) | Basse | mainteneur | À faire | — |
 | S-13 | Construire les évaluations de déclenchement des skills (jeux de prompts déclencheurs / non-déclencheurs) | Basse | mainteneur | À faire | — |
-| S-14 | Supprimer la branche `charte-0.3.1-src-format-echange` (intégrée à main) | Basse | mainteneur | À faire | — |
+| S-14 | Supprimer la branche `charte-0.3.1-src-format-echange` (intégrée à main) | Basse | mainteneur | Terminé (2026-07-21) — la branche visée n'existait plus (historique recréé) ; nettoyage de la branche résiduelle mergée `bascule-plugins-0.5.0` (distant + local) et purge des refs de suivi. Seul `main` subsiste | 2026-07-21 |
 
 ## 2. Registre des risques
 
