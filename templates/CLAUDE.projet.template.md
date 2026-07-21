@@ -13,6 +13,10 @@
 >
 > 📦 Version socle — plugin geoid : {{VERSION_PLUGIN_GEOID}} (marketplace) ;
 > template résiduel : {{VERSION_TEMPLATE}} (dernier merge).
+>
+> 🔌 Serveurs MCP (`.mcp.json`, si le projet en a) : **lecture seule** et
+> identifiants via **variables d'environnement** — jamais de secret en
+> clair (CHARTE §4, ADR-001d ; gabarit `templates/mcp.projet.template.json`).
 
 ## 0. Orchestration (session principale)
 Tu coordonnes le travail substantiel ; tu traites directement le

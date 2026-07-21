@@ -3,6 +3,30 @@
 Format inspiré de Keep a Changelog. La version vit aussi dans `SOCLE_VERSION`.
 Chaque projet note la version du socle utilisée dans son `CLAUDE.md`.
 
+## 0.5.1 — 2026-07
+Périmètre MCP au cadrage tranché (ADR-001d — dernier point ouvert de
+l'ADR-001, désormais clos). Itération de **contenu** sur le canal `latest` :
+les identifiants d'interface restent gelés (ADR-001 §7), aucun renommage.
+
+### Ajouté
+- **Étape « 2 bis — Serveurs MCP »** dans `geoid:cadrer-projet` : le cadrage
+  propose (l'utilisateur valide) la configuration de serveurs MCP dans le
+  `.mcp.json` **du projet**, par famille.
+  - Étude/analyse : **PostGIS lecture seule** via `crystaldba/postgres-mcp`
+    (`--access-mode=restricted`) + rôle PostgreSQL dédié read-only.
+  - Pipeline : **FME Flow MCP** conditionné à **FME ≥ 2026.2** vérifié au
+    cadrage (le pôle est en FME 2025.2 au 2026-07 → non proposé pour l'instant).
+  - Esri ArcGIS Location Services : **hors périmètre** (bêta), en veille (S-08).
+- **Gabarit `templates/mcp.projet.template.json`** : `.mcp.json` d'exemple
+  avec placeholders `${VAR}`, sans aucun secret en clair.
+- Consigne de sécurité MCP dans le template `CLAUDE.projet` (lecture seule,
+  identifiants en variables d'environnement — CHARTE §4).
+
+### Sécurité
+- Règle actée (ADR-001d, CHARTE §4) : jamais de secret en clair dans
+  `.mcp.json` ; identifiants **read-only** via **variables d'environnement**
+  (`${VAR}`). Mitige R-05.
+
 ## 0.5.0 — 2026-07
 Transposition du socle en **plugins Claude Code** (ADR-001, option D ;
 bascule immédiate tranchée le 2026-07-20, ADR-001 §6). Le dépôt devient
@@ -196,6 +220,7 @@ documentation Claude Code avant chaque changement.
 
 Journal des passages `/revue-socle` (date · périmètre · verdict).
 
+- **2026-07-21** · Version 0.5.1 (S-07 / ADR-001d — périmètre MCP au cadrage : étape « 2 bis » de `geoid:cadrer-projet`, gabarit `templates/mcp.projet.template.json`, consigne sécurité MCP au template) · **APPROUVÉ** (aucun bloquant). Point sécurité vérifié : gabarit sans secret (`${VAR}`), read-only à double détente (mode `restricted` + rôle BD dédié), consigne cohérente sur les 4 sources normatives (cadrage, template, ADR §8, CHARTE §4) ; versions alignées 0.5.1, 10 blocs d'intégrité + 3 tests verts. Deux durcissements suggérés appliqués (garde du bloc 10 élargie au-delà de `env` ; variable `POSTGIS_RO_URI` nommée dans la doc de cadrage).
 - **2026-07-20** · Version 0.5.0 (bascule en plugins : marketplace `.claude-plugin/`, plugins `geoid`/`geoid-meta`, alignement strict des versions, `/cadrer-projet` réécrit, checklist de migration, README/DEMARRER/bootstrap) · **APPROUVÉ** (réserve levée). 1re passe SOUS RÉSERVE — après le déplacement `.claude/skills/` → `plugins/geoid/skills/`, l'emplacement des skills restait écrit `.claude/skills/` dans `geoid-meta:creer-skill` (workflow inopérant), les agents `redacteur_skill`/`critique_skill`, le registre et la CHARTE §3 ; corrigés (+ titres de commandes préfixés, références GitHub `geoid_socle_pugin` dans DEMARRER, section « Nettoyage » de `creer-skill` réalignée). Versions alignées 0.5.0 partout, 3 tests verts.
 - **2026-07-02** · Version 0.4.0 (skills → `.claude/skills/`, agents skill-builder permanents, permissions durcies, CHARTE §5 scoppée aux dépendances, suivi projet externalisé, test d'intégrité réécrit, CI) · **APPROUVÉ** (réserves levées). 1re passe SOUS RÉSERVE — deux références périmées : README « Clôturer une session » citait encore le CLAUDE.md pour la roadmap/risques ; note master/dérivé CHARTE §3 non mise à jour après le déplacement des skills et déclaration dérivée absente du SKILL.md `conventions-sig-tse` ; corrigées (+ suggestions appliquées : bootstrap CLAUDE.md, mémo DEMARRER, tableau des couches et arborescence README, deny `cat *.env*`, CI filtrée sur main). 3 tests verts.
 - **2026-06-24** · Amendement CHARTE §3 (SRC d'un format d'échange prime ; GeoJSON = 4326) + skill `conventions-sig-tse` 1.0→1.1 + bump socle 0.3.1 · **APPROUVÉ** (réserve levée). 1re passe SOUS RÉSERVE — registre des skills affichait encore « Dernière revue : — » malgré la règle « régénérer à chaque amendement » ; corrigé (registre mis à jour : version 1.1, dernière revue 2026-06). Aucune contradiction introduite (front_carto §3857 = affichage, distinct du SRC de sortie) ; 3 tests verts.

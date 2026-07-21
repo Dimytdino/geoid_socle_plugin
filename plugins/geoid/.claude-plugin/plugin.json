@@ -1,7 +1,7 @@
 {
   "name": "geoid",
   "description": "Agents, skills et commandes du pôle GéoID pour les projets SIG : cadrage de projet, analyse, développement, revue et documentation.",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "author": {
     "name": "Pôle GéoID — TSE",
     "email": "dimitry.grohan@tse.energy"

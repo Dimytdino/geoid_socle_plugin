@@ -167,6 +167,38 @@ try:
 except Exception as e:
     echecs.append(f"verificateur de migration : {e}")
 
+# 10. Gabarit .mcp.json (ADR-001d) : JSON valide, structure attendue, et
+#     aucun identifiant en dur — les valeurs de connexion/secret passent par
+#     des placeholders ${VAR} (jamais de secret en clair, CHARTE §4).
+gabarit_mcp = RACINE / "templates/mcp.projet.template.json"
+if gabarit_mcp.exists():
+    try:
+        data = json.loads(gabarit_mcp.read_text(encoding="utf-8"))
+        serveurs = data.get("mcpServers")
+        verifier(isinstance(serveurs, dict) and serveurs,
+                 "gabarit .mcp.json : clé 'mcpServers' absente ou vide")
+
+        def _chaines(x):
+            # toutes les valeurs texte d'une conf serveur (env, args, url, headers...)
+            if isinstance(x, str):
+                yield x
+            elif isinstance(x, dict):
+                for v in x.values():
+                    yield from _chaines(v)
+            elif isinstance(x, list):
+                for v in x:
+                    yield from _chaines(v)
+
+        for nom, conf in (serveurs or {}).items():
+            for val in _chaines(conf):
+                # toute valeur ressemblant a une URI/identifiant doit etre un placeholder
+                if ("://" in val) or ("@" in val):
+                    verifier("${" in val,
+                             f"gabarit .mcp.json : serveur '{nom}' contient un "
+                             f"identifiant en dur (attendu : placeholder ${{VAR}})")
+    except Exception as e:
+        echecs.append(f"gabarit .mcp.json invalide : {e}")
+
 if echecs:
     print("ECHECS d'integrite :")
     for e in echecs:
