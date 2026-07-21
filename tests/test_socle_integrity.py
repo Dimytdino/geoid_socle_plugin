@@ -146,6 +146,27 @@ try:
 except Exception as e:
     echecs.append(f"coherence de version : {e}")
 
+# 9. Le verificateur de migration (scripts/verifier_migration_plugin.py) embarque
+#    les listes de composants fournis par les plugins pour rester autonome dans un
+#    depot projet. Elles doivent egaler le contenu reel des plugins, sinon il rate
+#    des doublons ou en signale de faux.
+try:
+    sys.path.insert(0, str(RACINE / "scripts"))
+    import verifier_migration_plugin as vmp
+    attendus = {
+        "AGENTS_GEOID": ({f.stem for f in (RACINE / "plugins/geoid/agents").glob("*.md")}, vmp.AGENTS_GEOID),
+        "AGENTS_GEOID_META": ({f.stem for f in (RACINE / "plugins/geoid-meta/agents").glob("*.md")}, vmp.AGENTS_GEOID_META),
+        "COMMANDS_GEOID": ({f.stem for f in (RACINE / "plugins/geoid/commands").glob("*.md")}, vmp.COMMANDS_GEOID),
+        "COMMANDS_GEOID_META": ({f.stem for f in (RACINE / "plugins/geoid-meta/commands").glob("*.md")}, vmp.COMMANDS_GEOID_META),
+        "SKILLS_GEOID": ({d.name for d in (RACINE / "plugins/geoid/skills").iterdir() if d.is_dir()}, vmp.SKILLS_GEOID),
+    }
+    for nom, (reel, embarque) in attendus.items():
+        verifier(reel == embarque,
+                 f"verifier_migration_plugin.{nom} desynchronise du plugin : "
+                 f"reel={sorted(reel)} vs embarque={sorted(embarque)}")
+except Exception as e:
+    echecs.append(f"verificateur de migration : {e}")
+
 if echecs:
     print("ECHECS d'integrite :")
     for e in echecs:

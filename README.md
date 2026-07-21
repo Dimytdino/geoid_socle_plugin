@@ -58,7 +58,8 @@ geoid-socle/
 │   └── style-doc-tse.css            charte CSS TSE pour les fiches HTML
 ├── scripts/
 │   ├── packager_skill.py            empaquette un skill en .skill (canal claude.ai)
-│   └── generer_doc_html.py          génère une fiche-outil HTML autoportante (Markdown → HTML)
+│   ├── generer_doc_html.py          génère une fiche-outil HTML autoportante (Markdown → HTML)
+│   └── verifier_migration_plugin.py détecte les doublons plugin/local d'un projet (migration 0.5.0)
 ├── tests/                           tests d'intégrité et unitaires (stdlib)
 ├── requirements-dev.txt             dépendance de dev verrouillée (markdown)
 └── .github/workflows/tests.yml      CI : les tests tournent à chaque push/PR
@@ -144,8 +145,9 @@ Le mode `bypassPermissions` est réservé aux environnements isolés
   **deux champs** : version du plugin `geoid` installé (marketplace) et
   version du template résiduel mergé.
 - **Tests** : `python3 tests/test_packager_skill.py`,
-  `python3 tests/test_socle_integrity.py` et
-  `python3 tests/test_generer_doc_html.py` avant push. La CI
+  `python3 tests/test_socle_integrity.py`,
+  `python3 tests/test_generer_doc_html.py` et
+  `python3 tests/test_verifier_migration_plugin.py` avant push. La CI
   (`.github/workflows/tests.yml`) les rejoue à chaque push/PR, avec la
   dépendance `markdown` installée (`requirements-dev.txt`) pour qu'aucun
   test ne soit ignoré en silence.
@@ -186,7 +188,10 @@ Le mode `bypassPermissions` est réservé aux environnements isolés
 - **Migrer un projet existant** vers le mode plugin : suivre la checklist
   de la section 0.5.0 du `CHANGELOG.md` (installer la marketplace,
   supprimer les copies locales devenues des doublons, renseigner la ligne
-  de version à deux champs, relancer Claude Code).
+  de version à deux champs, relancer Claude Code). Outil de contrôle :
+  `python3 scripts/verifier_migration_plugin.py` (lancé dans le dépôt du
+  projet) détecte les doublons plugin/local restants et vérifie l'en-tête
+  de version.
 
 ## Conventions de contribution
 
