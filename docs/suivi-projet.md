@@ -16,17 +16,11 @@ Tenu à jour par le `chef_projet` (ou l'orchestrateur s'il n'est pas
 activé), notamment via `/cloturer-session`. L'humain valide ce qui
 entre ici (cf. CHARTE §4 et §5).
 
-Version courante du socle (poussée) : **0.4.0** (commit `64a12c1`, mergé
-sur `main` en `5e5a832`, poussé le 2026-07-03 — PR #1 et #2, tests
-d'intégrité 5/5 verts).
-
-**0.5.0 en préparation** (S-05, bascule en plugins) : transposition faite
-en dépôt (marketplace `.claude-plugin/`, plugins `geoid`/`geoid-meta`,
-`SOCLE_VERSION` = 0.5.0, `/cadrer-projet` réécrit, CHANGELOG + checklist de
-migration, README/DEMARRER à jour). Reste — action mainteneur — la revue
-`geoid-meta:revue-socle`, le commit/PR, le **tag `0.5.0`** et la
-publication marketplace (canal `latest`), puis la passe de verrouillage des
-noms avant le tag `stable`.
+Version courante du socle : **0.5.0** (bascule en plugins — PR #1 mergée
+sur `main` en `a4df160` le 2026-07-21, tag `0.5.0` poussé, pré-release
+publiée en canal `latest`, tag `stable` coupé après verrouillage des noms
+le 2026-07-21). Marketplace `geoid-socle` → plugins `geoid` / `geoid-meta`.
+Tests d'intégrité verts (dont le bloc de cohérence de version, ADR-001c).
 
 ## 1. Roadmap / backlog
 
@@ -36,7 +30,7 @@ noms avant le tag `stable`.
 | S-02 | Instruction de l'ADR-001 (transposition en plugins) | Haute | architecte | Terminé | 2026-07-03 |
 | S-03 | Réception et consolidation des REX pilotes (grille `REX-pilotes.md`, 3 pilotes) | Haute | équipe pilotes / mainteneur | En cours | prochaine échéance |
 | S-04 | Trancher ADR-001a : critères et calendrier de bascule | Haute | architecte + D. Grohan | Terminé (bascule immédiate, ADR-001 §6) | 2026-07-20 |
-| S-05 | Publication marketplace + plugins `geoid`/`geoid-meta`, tag 0.5.0, réécriture `/cadrer-projet`, checklist de migration | Haute | mainteneur / developpeur | En cours — préparation 0.5.0 faite en dépôt (structure plugins, versions, `/cadrer-projet`, CHANGELOG+checklist, doc) ; reste revue socle + commit/PR + tag + publication marketplace | 2026-07-20 |
+| S-05 | Publication marketplace + plugins `geoid`/`geoid-meta`, tag 0.5.0, réécriture `/cadrer-projet`, checklist de migration | Haute | mainteneur / developpeur | Terminé (2026-07-21) — PR #1 mergée, tag `0.5.0` + pré-release `latest`, noms verrouillés, tag `stable` coupé (ADR-001 §7) | 2026-07-21 |
 | S-06 | Trancher ADR-001c : politique de version | Moyenne | architecte + D. Grohan | Terminé (alignement strict, ADR-001 §6) — mise en œuvre (bloc test d'intégrité, mentions de version CLAUDE.md) portée par S-05 | 2026-07-20 |
 | S-07 | Trancher ADR-001d : périmètre MCP au cadrage (PostGIS RO — étude/analyse ; FME Flow MCP conditionné à FME 2026.2 — pipeline ; puis étape MCP dans `/cadrer-projet`, gabarit `.mcp.json`, consigne « identifiants RO, jamais en clair ») | Moyenne | architecte + D. Grohan | À faire | — |
 | S-08 | Veille ArcGIS Location Services MCP (bêta Esri du 2026-06-29) : critères de sortie de veille | Basse | mainteneur | En cours | — |
@@ -52,7 +46,7 @@ noms avant le tag `stable`.
 | ID | Risque | Probabilité | Impact | Mitigation | Statut |
 |----|--------|-------------|--------|------------|--------|
 | R-01 | Dérive de version du socle entre projets pendant le statu quo (diffusion par merge) | Élevée | Moyen | Bascule immédiate actée (ADR-001a, cible 0.5.0) : referme le risque plus tôt. Fin de support option A visée après le cycle 0.6.0 | En voie de fermeture |
-| R-02 | Gel de l'interface plugin (préfixes `geoid:`/`geoid-meta:`, découpage) avant stabilisation → renommage coûteux | Moyenne | Élevé | Mitigation revue (ADR-001a) : verrouillage délibéré des noms avant le tag `stable` + canal `latest` pour itérer sans engager l'interface ; l'essentiel des noms est déjà éprouvé en option A | Maîtrisé |
+| R-02 | Gel de l'interface plugin (préfixes `geoid:`/`geoid-meta:`, découpage) avant stabilisation → renommage coûteux | Moyenne | Élevé | Verrouillage des noms mené et documenté (ADR-001 §7, 2026-07-21) ; tag `stable` coupé ; canal `latest` ouvert pour itérer le contenu en 0.5.x sans renommage ; noms majoritairement éprouvés depuis l'option A | Fermé (2026-07-21) |
 | R-03 | REX pilotes tardifs ou incomplets → bascule repoussée sine die | Moyenne | Moyen | Bascule découplée des REX (ADR-001a) : les REX s'intègrent en 0.5.x par versions mineures. Risque levé | Fermé (2026-07-20) |
 | R-04 | Post-bascule : désynchronisation des deux canaux de diffusion (marketplace vs template résiduel — CHARTE, settings, spécialisations) | Moyenne | Moyen | Extension du test d'intégrité (ADR-001c) ; signalement de décalage de versions par `/cloturer-session` (ADR-001 §4.1) | Ouvert |
 | R-05 | MCP au cadrage : chaînes de connexion ou identifiants en clair dans le `.mcp.json` projet (violation CHARTE §4) | Faible | Élevé | Cadrer dans ADR-001d : identifiants lecture seule + variables d'environnement, consigne explicite dans le template | Ouvert |
@@ -81,6 +75,7 @@ verdict **APPROUVÉ** (réserves levées).
 | 2026-07-03 | MCP dans le socle | Aucun MCP configuré dans le socle lui-même ; candidats proposés au cadrage projet (ADR-001d) : Postgres/PostGIS lecture seule (étude/analyse), FME Flow MCP conditionné au passage FME 2026.2 (pipeline), ArcGIS Location Services MCP en veille | Les chaînes de connexion sont propres à chaque projet ; le tout-ou-rien du plugin imposerait tous les MCP partout (ADR-001 §4.3) |
 | 2026-07-20 | Calendrier de bascule (ADR-001a) | **Bascule immédiate** (candidat 0.5.0) : publication marketplace + plugins sans attendre les REX ; canal `latest` puis tag `stable` après verrouillage des noms ; fin de support option A visée après 0.6.0 | Fait nouveau : table rase (pas de projets aval à protéger) → le motif dominant du séquencement tombe ; interface neuve minime (préfixes imposés) ; contenu corrigeable par versions mineures. Détail : ADR-001 §6 |
 | 2026-07-20 | Politique de version (ADR-001c) | **Alignement strict** : `SOCLE_VERSION` = version `geoid` = version `geoid-meta` = tag marketplace ; bloc de cohérence ajouté à `test_socle_integrity.py` ; CLAUDE.md projet porte deux champs (plugin `geoid` / template résiduel) | Source de vérité unique (ADR-001 §4.1) ; garantie vérifiable par le test d'intégrité ; « bump à vide » d'un plugin accepté (mainteneur/release uniques). Détail : ADR-001 §6 |
+| 2026-07-21 | Verrouillage des noms + coupe du tag `stable` (ADR-001a) | **Noms gelés** : marketplace `geoid-socle`, plugins `geoid`/`geoid-meta`, commandes préfixées, agents, skills, frontière de découpage (liste : ADR-001 §7). Tag `stable` coupé ; canal `latest` ouvert pour le contenu | Audit de cohérence sans écart ; noms majoritairement éprouvés en option A ; le gel porte sur les identifiants, pas sur le contenu (itérable en 0.5.x). Ferme R-02. Détail : ADR-001 §7 |
 
 ## 5. 🔧 À arbitrer (points ouverts)
 

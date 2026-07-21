@@ -206,3 +206,45 @@ régime « clone » à protéger.
   verrouillage délibéré des noms + le canal `latest`/`stable`.
 - **R-03** (REX tardifs → bascule sine die) : disparaît (bascule
   découplée des REX).
+
+## 7. Verrouillage des noms et coupe du tag `stable` (2026-07-21)
+
+Passe de verrouillage prévue par l'ADR-001a (garde-fou : publier d'abord
+en `latest`/pré-release, ne couper `stable` qu'après le gel des noms).
+Menée sur le dépôt à l'état de la 0.5.0 (tag `0.5.0`, pré-release
+publiée), audit de cohérence des identifiants effectué et sans écart.
+
+**Interface gelée** (tout renommage ultérieur = migration de tous les
+projets + de la doc ; ne se fait plus qu'en version majeure) :
+- **Marketplace** : `geoid-socle`.
+- **Plugins** : `geoid` (équipes), `geoid-meta` (mainteneur).
+- **Commandes** : `geoid:cadrer-projet`, `geoid:cloturer-session`,
+  `geoid-meta:creer-skill`, `geoid-meta:revue-socle` (l'identifiant dérive
+  du nom de fichier — pas de champ `name:` divergent).
+- **Agents `geoid`** : `architecte`, `developpeur`, `analyste_sig`,
+  `revieweur`, `documentaliste`, `chef_projet`, `mentor`.
+- **Agents `geoid-meta`** : `interviewer_skill`, `redacteur_skill`,
+  `critique_skill`.
+- **Skills** : `conventions-sig-tse`, `environnement-arcgis-tse`,
+  `fme-tse`.
+- **Frontière de découpage** : agents projet + skills du pôle +
+  `cadrer`/`cloturer` dans `geoid` ; skill-builder + `creer-skill` /
+  `revue-socle` dans `geoid-meta`.
+
+Hors gel (les spécialisations `developpeur_back_geo` /
+`developpeur_front_carto` / `developpeur_etl` vivent dans le template
+résiduel, pas dans l'interface plugin — renommables sans impact
+marketplace).
+
+**Encore mobile** malgré le gel des noms : le **contenu** des
+agents/skills/commandes, les ajouts, le versant template, les propositions
+MCP (ADR-001d). Le gel porte sur les identifiants, pas sur le texte.
+
+**Conséquence** : le tag **`stable`** est coupé. Les projets épinglent
+désormais `stable` ; le canal `latest` reste ouvert pour itérer le contenu
+en 0.5.x sans coût de renommage.
+
+**Impact risque** : **R-02** (gel prématuré de l'interface) — fermé : le
+gel est désormais délibéré et documenté, l'interface est majoritairement
+éprouvée depuis l'option A, et le canal `latest` absorbe les itérations de
+contenu.
