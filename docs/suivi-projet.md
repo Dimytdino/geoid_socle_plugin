@@ -21,10 +21,11 @@ mergée sur `main` en `a4df160` le 2026-07-21, tag `0.5.0` poussé, pré-release
 canal `latest`, tag `stable` coupé après verrouillage des noms).
 Marketplace `geoid-socle` → plugins `geoid` / `geoid-meta`.
 
-**0.5.1 en préparation** (S-07, périmètre MCP au cadrage — ADR-001d) : étape
-MCP dans `geoid:cadrer-projet`, gabarit `.mcp.json`, consigne de sécurité au
-template. Itération de contenu sur le canal `latest` (noms gelés). Reste :
-revue socle + commit/PR + tag `0.5.1`. Tests d'intégrité verts (10 blocs).
+**0.5.1** (S-07, périmètre MCP au cadrage — ADR-001d) publiée le 2026-07-21 :
+PR #4 mergée (`ff0b9e0`), tag `0.5.1` + pré-release canal `latest` (étape MCP
+dans `geoid:cadrer-projet`, gabarit `.mcp.json`, consigne de sécurité au
+template). Itération de contenu, noms gelés — `stable` reste à 0.5.0.
+Tests d'intégrité verts (10 blocs).
 
 ## 1. Roadmap / backlog
 
@@ -38,7 +39,7 @@ revue socle + commit/PR + tag `0.5.1`. Tests d'intégrité verts (10 blocs).
 | S-06 | Trancher ADR-001c : politique de version | Moyenne | architecte + D. Grohan | Terminé (alignement strict, ADR-001 §6) — mise en œuvre (bloc test d'intégrité, mentions de version CLAUDE.md) portée par S-05 | 2026-07-20 |
 | S-07 | Trancher ADR-001d : périmètre MCP au cadrage (PostGIS RO — étude/analyse ; FME Flow MCP conditionné à FME 2026.2 — pipeline ; puis étape MCP dans `/cadrer-projet`, gabarit `.mcp.json`, consigne « identifiants RO, jamais en clair ») | Moyenne | architecte + D. Grohan | Terminé (2026-07-21) — ADR-001d tranché (ADR-001 §8) ; étape MCP + gabarit + consigne livrés en 0.5.1 | 2026-07-21 |
 | S-08 | Veille ArcGIS Location Services MCP (bêta Esri du 2026-06-29) : critères de sortie de veille | Basse | mainteneur | En cours | — |
-| S-09 | Migrer les projets existants vers le mode plugin (checklist CHANGELOG 0.5.0 : install marketplace, suppression des doublons `.claude/` locaux, en-tête de version, relance) — outil `scripts/verifier_migration_plugin.py` fourni. La propagation par merge (0.4.0) est supersédée sauf pour le template résiduel (CHARTE, settings, spécialisations) | Haute | mainteneur / équipes | À faire — outil de vérification livré (2026-07-21) ; migration par projet à mener | — |
+| S-09 | Migrer les projets existants vers le mode plugin | Haute | mainteneur / équipes | Sans objet (2026-07-21) — aucun projet aval à migrer (table rase confirmée, cf. ADR-001a). Outillage conservé (checklist CHANGELOG 0.5.0 + `scripts/verifier_migration_plugin.py`) au cas où un ancien clone referait surface | — |
 | S-10 | Re-packager et faire republier `conventions-sig-tse.skill` dans claude.ai (master/dérivé) | Moyenne | mainteneur | À faire | — |
 | S-11 | Activer le sandbox OS (`settings.json`, bubblewrap) après test sur un poste WSL2 | Moyenne | mainteneur | À faire | — |
 | S-12 | Arbitrer le statut des skills brouillons dans `plugins/geoid/skills/` (actifs dès que le plugin est installé/rechargé — à confirmer) | Basse | mainteneur | À faire | — |
@@ -49,7 +50,7 @@ revue socle + commit/PR + tag `0.5.1`. Tests d'intégrité verts (10 blocs).
 
 | ID | Risque | Probabilité | Impact | Mitigation | Statut |
 |----|--------|-------------|--------|------------|--------|
-| R-01 | Dérive de version du socle entre projets pendant le statu quo (diffusion par merge) | Élevée | Moyen | Bascule immédiate actée (ADR-001a, cible 0.5.0) : referme le risque plus tôt. Fin de support option A visée après le cycle 0.6.0 | En voie de fermeture |
+| R-01 | Dérive de version du socle entre projets pendant le statu quo (diffusion par merge) | Élevée | Moyen | Bascule immédiate faite (0.5.0) ET aucun projet aval en régime « merge » (table rase confirmée 2026-07-21) : plus de population exposée. Diffusion désormais par marketplace | Fermé (2026-07-21) |
 | R-02 | Gel de l'interface plugin (préfixes `geoid:`/`geoid-meta:`, découpage) avant stabilisation → renommage coûteux | Moyenne | Élevé | Verrouillage des noms mené et documenté (ADR-001 §7, 2026-07-21) ; tag `stable` coupé ; canal `latest` ouvert pour itérer le contenu en 0.5.x sans renommage ; noms majoritairement éprouvés depuis l'option A | Fermé (2026-07-21) |
 | R-03 | REX pilotes tardifs ou incomplets → bascule repoussée sine die | Moyenne | Moyen | Bascule découplée des REX (ADR-001a) : les REX s'intègrent en 0.5.x par versions mineures. Risque levé | Fermé (2026-07-20) |
 | R-04 | Post-bascule : désynchronisation des deux canaux de diffusion (marketplace vs template résiduel — CHARTE, settings, spécialisations) | Moyenne | Moyen | Extension du test d'intégrité (ADR-001c) ; signalement de décalage de versions par `/cloturer-session` (ADR-001 §4.1) | Ouvert |
@@ -80,6 +81,7 @@ verdict **APPROUVÉ** (réserves levées).
 | 2026-07-20 | Calendrier de bascule (ADR-001a) | **Bascule immédiate** (candidat 0.5.0) : publication marketplace + plugins sans attendre les REX ; canal `latest` puis tag `stable` après verrouillage des noms ; fin de support option A visée après 0.6.0 | Fait nouveau : table rase (pas de projets aval à protéger) → le motif dominant du séquencement tombe ; interface neuve minime (préfixes imposés) ; contenu corrigeable par versions mineures. Détail : ADR-001 §6 |
 | 2026-07-20 | Politique de version (ADR-001c) | **Alignement strict** : `SOCLE_VERSION` = version `geoid` = version `geoid-meta` = tag marketplace ; bloc de cohérence ajouté à `test_socle_integrity.py` ; CLAUDE.md projet porte deux champs (plugin `geoid` / template résiduel) | Source de vérité unique (ADR-001 §4.1) ; garantie vérifiable par le test d'intégrité ; « bump à vide » d'un plugin accepté (mainteneur/release uniques). Détail : ADR-001 §6 |
 | 2026-07-21 | Verrouillage des noms + coupe du tag `stable` (ADR-001a) | **Noms gelés** : marketplace `geoid-socle`, plugins `geoid`/`geoid-meta`, commandes préfixées, agents, skills, frontière de découpage (liste : ADR-001 §7). Tag `stable` coupé ; canal `latest` ouvert pour le contenu | Audit de cohérence sans écart ; noms majoritairement éprouvés en option A ; le gel porte sur les identifiants, pas sur le contenu (itérable en 0.5.x). Ferme R-02. Détail : ADR-001 §7 |
+| 2026-07-21 | Migration des projets existants (S-09) | **Sans objet** : aucun projet aval à migrer (table rase confirmée par D. Grohan). S-09 clôturée ; outillage (checklist + `verifier_migration_plugin.py`) conservé pour un éventuel clone résiduel | Cohérent avec la prémisse de l'ADR-001a (bascule immédiate justifiée par l'absence de projets aval). Ferme R-01 |
 | 2026-07-21 | Périmètre MCP au cadrage (ADR-001d) | Cadrage propose (utilisateur valide) : **PostGIS RO** (`crystaldba/postgres-mcp` restricted, rôle BD dédié) en étude/analyse ; **FME Flow MCP** conditionné à **FME ≥ 2026.2** (pôle en 2025.2 → non proposé pour l'instant) en pipeline ; **Esri** hors périmètre (bêta, veille S-08, critères de sortie définis). Sécurité : RO + `${VAR}`, jamais de secret en clair. Livré en 0.5.1 (étape MCP `cadrer-projet`, gabarit `.mcp.json`, consigne template) | Faits vérifiés (serveur PG de référence archivé/vulnérable → écarté ; FME Flow MCP GA mais requiert 2026.2 ; Esri en bêta sans GA). Dernier point ADR-001 clos. Détail : ADR-001 §8 |
 
 ## 5. 🔧 À arbitrer (points ouverts)
