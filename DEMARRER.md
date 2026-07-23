@@ -14,7 +14,7 @@ de toi la première fois.
 - Un terminal avec **Node.js** installé.
 - **Claude Code** : `npm install -g @anthropic-ai/claude-code`, puis
   `claude` une première fois pour se connecter avec le compte Claude TSE.
-- Accès au dépôt **TSE-Pole-Geomatique/geoid_socle_pugin** sur GitHub.
+- Accès au dépôt **TSE-Pole-Geomatique/geoid_socle_plugin** sur GitHub.
 - **Sous Windows** : travailler dans **WSL**, et garder les dépôts dans le
   home WSL (`~/...`), jamais dans `/mnt/c/...` (plus lent, problèmes de
   permissions).
@@ -30,7 +30,7 @@ claude --version    # doit répondre une version
 ## Étape 1 — Créer le dépôt du projet depuis le template
 
 Sur **GitHub** :
-1. Ouvrir le dépôt `geoid_socle_pugin`.
+1. Ouvrir le dépôt `geoid_socle_plugin`.
 2. Bouton **Use this template** → *Create a new repository*.
 3. Nommer le projet en minuscules-tirets (ex. `pipeline-rpg`,
    `widget-export-geojson`, `orion-poc`).
@@ -57,7 +57,7 @@ Au premier lancement dans le dossier, accepter de faire confiance au dépôt
 Installer ensuite le plugin d'équipe `geoid` depuis la marketplace du pôle
 (une fois par projet) — il apporte les agents, skills et commandes :
 ```
-/plugin marketplace add TSE-Pole-Geomatique/geoid_socle_pugin
+/plugin marketplace add TSE-Pole-Geomatique/geoid_socle_plugin
 /plugin install geoid@geoid-socle
 ```
 Puis lancer le cadrage :
@@ -165,7 +165,7 @@ Depuis la 0.5.0, le socle se met à jour par **deux canaux** :
 - **CHARTE, permissions, templates, spécialisations** (template résiduel) —
   par merge git, une fois par projet ajouter le socle comme source :
   ```bash
-  git remote add socle https://github.com/TSE-Pole-Geomatique/geoid_socle_pugin.git
+  git remote add socle https://github.com/TSE-Pole-Geomatique/geoid_socle_plugin.git
   ```
   puis à chaque évolution :
   ```bash

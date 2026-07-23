@@ -11,7 +11,7 @@ Règles applicables dès maintenant :
 1. Lire `CHARTE.md` (règles transverses du pôle GéoID) — elle s'applique
    intégralement.
 2. Installer le plugin d'équipe s'il ne l'est pas encore
-   (`/plugin marketplace add TSE-Pole-Geomatique/geoid_socle_pugin` puis
+   (`/plugin marketplace add TSE-Pole-Geomatique/geoid_socle_plugin` puis
    `/plugin install geoid@geoid-socle`) : c'est lui qui apporte les agents,
    skills et commandes du pôle.
 3. Avant toute production significative, proposer à l'utilisateur de lancer
