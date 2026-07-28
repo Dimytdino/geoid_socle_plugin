@@ -130,6 +130,14 @@ soumettre dans une conversation neuve avec le skill installé :
 - La réponse applique-t-elle les règles ? Si non → clarifier le corps.
 - Tester aussi une demande hors sujet : le skill ne doit PAS se déclencher.
 
+Ces jeux de prompts ne sont pas jetables : les **figer** dans
+`evals/<nom-du-skill>.eval.json` (déclencheurs + non-déclencheurs, dont au
+moins un cas « frontière » où un skill voisin est attendu et un cas
+hors-périmètre). La structure et la couverture sont vérifiées en CI
+(`scripts/evaluer_declenchement.py`) ; le test de déclenchement réel se
+rejoue à chaque revue via `--rapport`. Protocole complet et grille de
+résultats : `evals/README.md`.
+
 ### Étape 5 — Publier et faire vivre (15 min)
 Publication par l'admin de l'organisation Claude (propagation immédiate à
 tout le pôle). Le mainteneur tient le registre ; toute personne qui constate
@@ -198,5 +206,8 @@ décide si le skill se déclenche. Les bonnes pratiques constatées :
       CLAUDE.md projet — une connaissance, un étage
 - [ ] Testé sur 3-5 demandes réelles (déclenchement + application) et
       1 demande hors sujet (non-déclenchement)
+- [ ] Jeu d'éval `evals/<nom>.eval.json` créé et vert
+      (`python3 scripts/evaluer_declenchement.py`) — la CI refuse un skill
+      publié sans éval
 - [ ] Source et mainteneur identifiés dans le registre
 ```

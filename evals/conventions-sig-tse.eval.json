@@ -1,0 +1,55 @@
+{
+  "skill": "conventions-sig-tse",
+  "version_skill_evaluee": "1.1",
+  "note": "Le risque principal est le SOUS-déclenchement : le skill doit s'activer même quand l'utilisateur ne parle ni de SRC ni de format. Les non-déclencheurs vérifient qu'il ne parasite pas l'administration ArcGIS, la structure de fiche FME, ni du SQL non spatial.",
+  "declencheurs": [
+    {
+      "prompt": "Calcule la surface de ces parcelles et exporte le résultat en GeoJSON pour l'agence.",
+      "pourquoi": "Surface (calcul en 2154) + export GeoJSON (reprojection 4326 imposée par le format) : cœur des règles 1 et 3, sans que l'utilisateur mentionne de SRC."
+    },
+    {
+      "prompt": "Fais une jointure spatiale entre la couche des terrains et le cadastre dans PostGIS.",
+      "pourquoi": "Requête SQL spatiale PostGIS : index spatial GIST, validité géométrique — déclencheur explicite de la description."
+    },
+    {
+      "prompt": "Reprends ce shapefile, reprojette-le et charge-le en base.",
+      "pourquoi": "Reprojection explicite + validation avant écriture (règles 4 et 5) ; teste aussi le rappel des limites du Shapefile."
+    },
+    {
+      "prompt": "Écris un script GeoPandas qui bufferise les emprises de 50 mètres.",
+      "pourquoi": "Script Python manipulant des géométries (GeoPandas/Shapely) : déclencheur nommé, calcul métrique donc en 2154."
+    },
+    {
+      "prompt": "Prépare un jeu de données des secteurs à envoyer à un prestataire externe.",
+      "pourquoi": "Donnée foncière sortant de TSE : confidentialité (règle 6), format d'échange par défaut et traçabilité des sources — même sans le mot « SIG »."
+    },
+    {
+      "prompt": "Quelle unité et quelle précision utiliser pour restituer les surfaces dans la note d'analyse ?",
+      "pourquoi": "Restitution métier : hectares, arrondi, pas de précision illusoire — section « Comment faire »."
+    },
+    {
+      "prompt": "Importe ce GeoPackage et calcule les distances entre les points d'implantation.",
+      "pourquoi": "Import géo + calcul de distances : à faire en 2154, lecture explicite du SRC."
+    }
+  ],
+  "non_declencheurs": [
+    {
+      "prompt": "Comment configurer les intervenants ArcGIS et la VDI de développement du pôle ?",
+      "pourquoi": "Administration de la plateforme ArcGIS, pas de manipulation de donnée géo : explicitement hors périmètre.",
+      "skill_attendu": "environnement-arcgis-tse"
+    },
+    {
+      "prompt": "Quelle est la structure type d'une fiche de documentation d'un outil FME ?",
+      "pourquoi": "Structure de fiche / documentation d'outil : relève de fme-tse, pas des conventions SIG génériques.",
+      "skill_attendu": "fme-tse"
+    },
+    {
+      "prompt": "Écris une requête SQL pour agréger le chiffre d'affaires mensuel dans notre base de facturation.",
+      "pourquoi": "SQL mais NON spatial : contrôle du sur-déclenchement sur le mot « SQL / base »."
+    },
+    {
+      "prompt": "Rédige un mail de relance à un fournisseur pour une facture en retard.",
+      "pourquoi": "Aucun rapport avec la donnée géographique : ne doit déclencher aucun skill."
+    }
+  ]
+}

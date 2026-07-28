@@ -1,0 +1,51 @@
+{
+  "skill": "environnement-arcgis-tse",
+  "version_skill_evaluee": "0.1",
+  "note": "Les standards front-end sont compressés dans ce skill (arbitrage 2026-06 : pas de skill front-tse tant que la règle des 3 n'est pas confirmée). Un prompt front générique (React hors ArcGIS) doit donc NE PAS déclencher : c'est la frontière à surveiller.",
+  "declencheurs": [
+    {
+      "prompt": "Génère un widget exb.",
+      "pourquoi": "Formulation minimale de l'équipe : doit déclencher même sans version ni détail (déclencheur textuel de la description)."
+    },
+    {
+      "prompt": "Je souhaite créer un widget pour Experience Builder.",
+      "pourquoi": "Création de widget ExB : cas d'usage principal, déclencheur nommé."
+    },
+    {
+      "prompt": "Comment publier une application ArcGIS sur le Portal ?",
+      "pourquoi": "Publication / administration ArcGIS + Portal : déclencheurs nommés."
+    },
+    {
+      "prompt": "Aide-moi à utiliser JimuMapView dans mon widget.",
+      "pourquoi": "API jimu / JimuMapView : déclencheur nommé, spécifique ExB."
+    },
+    {
+      "prompt": "Je dois créer une fonctionnalité sur ArcGIS.",
+      "pourquoi": "Formulation vague mais nommée explicitement dans la description (« je dois créer une fonctionnalité sur arcgis »)."
+    },
+    {
+      "prompt": "Quelle est la version d'ArcGIS Enterprise et d'ExB Developer Edition du pôle ?",
+      "pourquoi": "Faits d'environnement (11.3 / 1.17) : le skill porte ces valeurs de référence."
+    }
+  ],
+  "non_declencheurs": [
+    {
+      "prompt": "Calcule la surface en hectares de ces emprises et exporte en GeoJSON.",
+      "pourquoi": "Manipulation de donnée géo générique : relève de conventions-sig-tse.",
+      "skill_attendu": "conventions-sig-tse"
+    },
+    {
+      "prompt": "Documente ce workflow FME de préparation des données.",
+      "pourquoi": "Documentation d'un workflow FME : relève de fme-tse.",
+      "skill_attendu": "fme-tse"
+    },
+    {
+      "prompt": "Crée un composant React avec un state pour un formulaire de contact.",
+      "pourquoi": "Front-end générique hors ArcGIS/jimu : frontière à tenir — le skill ne doit PAS déclencher sur du React sans contexte ArcGIS."
+    },
+    {
+      "prompt": "Installe PostgreSQL sur ma machine de développement.",
+      "pourquoi": "Installation d'un SGBD, aucun rapport avec ArcGIS : ne doit déclencher aucun skill."
+    }
+  ]
+}
