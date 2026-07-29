@@ -70,7 +70,7 @@ ADR-001 §4.4).
 ### Migration des projets existants (checklist)
 Par projet, une fois `geoid` disponible dans la marketplace :
 1. **Installer la marketplace puis le plugin** : `/plugin marketplace add
-   TSE-Pole-Geomatique/geoid_socle_pugin`, puis `/plugin install
+   TSE-Pole-Geomatique/geoid_socle_plugin`, puis `/plugin install
    geoid@geoid-socle`. (Le mainteneur du socle installe en plus
    `geoid-meta`.)
 2. **Supprimer de `.claude/` les copies locales** désormais fournies par le

@@ -72,7 +72,7 @@ geoid-socle/
    `templates/` et `specialisations/`.
 2. `cd <projet> && claude`
 3. Installer le plugin d'équipe depuis la marketplace :
-   `/plugin marketplace add TSE-Pole-Geomatique/geoid_socle_pugin`, puis
+   `/plugin marketplace add TSE-Pole-Geomatique/geoid_socle_plugin`, puis
    `/plugin install geoid@geoid-socle`. Les agents, skills et commandes du
    pôle deviennent disponibles (préfixés `geoid:`).
 4. Lancer **`/cadrer-projet`** : entretien guidé, génération du
