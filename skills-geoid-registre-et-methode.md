@@ -33,8 +33,8 @@ Une connaissance vit à un seul étage.
 | Skill | Version | Date | Mainteneur | Source (master) | Dernière revue |
 |-------|---------|------|------------|-----------------|----------------|
 | `conventions-sig-tse` | 1.1 | 2026-06 | directeur du pôle | CHARTE §3 et §4 (master ; ce skill en est la copie dérivée, à régénérer à chaque amendement de la CHARTE) | 2026-06 (amendement CHARTE §3 — SRC format d'échange / GeoJSON 4326, socle 0.3.1) |
-| `fme-tse` | 0.1 (brouillon) | 2026-06 | Kilian (contenu conventionnel) | Pilote « documentation FME » (ADR-002) — partie « structure de fiche » issue de la fiche covisibilité ; conventions de nommage/emplacement/staging/journalisation **à compléter par Kilian** | À passer en `/revue-socle` |
-| `environnement-arcgis-tse` | 0.1 | 2026-06 | Fateh + Dimitry | Interview Dimitry (2026-06, `/creer-skill`) ; faits d'environnement recoupés avec ADR-001 du dépôt `nemelios_ags` (Enterprise 11.3, ExB Dev Edition 1.17, EPSG:2154). **À confirmer avec Fateh** : nombre d'applications métier, liste des intervenants ArcGIS, procédure VDI pas-à-pas | 2026-06 (création, critique APPROUVÉ) |
+| `fme-tse` | 0.1 (actif — complétion en cours) | 2026-06 | Kilian (contenu conventionnel) | Pilote « documentation FME » (ADR-002) — partie « structure de fiche » issue de la fiche covisibilité ; conventions de nommage/emplacement/staging/journalisation **à compléter par Kilian** (étiquetées comme telles dans le SKILL, §« Conventions à compléter ») | À passer en `/revue-socle` |
+| `environnement-arcgis-tse` | 0.1 (actif — complétion en cours) | 2026-06 | Fateh + Dimitry | Interview Dimitry (2026-06, `/creer-skill`) ; faits d'environnement recoupés avec ADR-001 du dépôt `nemelios_ags` (Enterprise 11.3, ExB Dev Edition 1.17, EPSG:2154). **À confirmer avec Fateh** : nombre d'applications métier, liste des intervenants ArcGIS, procédure VDI pas-à-pas (points périphériques, n'affectant pas les règles de standard de code) | 2026-06 (création, critique APPROUVÉ) |
 
 > Les skills sources vivent dans `plugins/geoid/skills/<nom>/` : c'est à la
 > fois le dossier versionné (source de vérité) et le contenu embarqué par
@@ -45,9 +45,20 @@ Une connaissance vit à un seul étage.
 > l'admin de l'organisation. Le fichier `.skill` est un **artefact
 > généré**, non versionné (cf. `.gitignore`) — re-packager à chaque
 > publication.
-> ⚠️ Un skill encore en brouillon (non passé en `geoid-meta:revue-socle`)
-> devient actif dès que le plugin `geoid` qui l'embarque est installé et
-> rechargé : n'y laisser que des contenus qu'on assume de voir appliqués.
+> ⚠️ **Un skill présent dans `plugins/geoid/skills/` est actif dès que le
+> plugin `geoid` est installé et rechargé** — confirmé (doc Claude Code,
+> S-12, 2026-07-29) : les skills d'un plugin sont tous découverts
+> automatiquement, il n'existe **aucune activation ni désactivation par
+> skill** (le réglage `skillOverrides` ne vise que les skills projet
+> `.claude/skills/`, pas ceux d'un plugin ; pas de champ `draft`). En
+> conséquence — **règle** : ne mettre dans `plugins/geoid/skills/` que du
+> contenu qu'on **assume de voir auto-appliqué**. Un contenu non assumé
+> reste hors du dossier (staging repo) jusqu'à ce qu'il le soit.
+>
+> Un skill peut donc être **actif tout en étant en complétion** : ses
+> manques doivent alors être *regroupés et explicitement étiquetés*
+> « à compléter / à confirmer » (jamais présentés comme des faits), pour
+> qu'un déclenchement applique le noyau sûr et signale les points ouverts.
 
 **Quand une revue d'un skill publié est obligatoire :** amendement de la
 CHARTE (pour les skills dérivés), retour d'expérience d'un pilote, erreur
