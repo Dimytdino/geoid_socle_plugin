@@ -1,0 +1,51 @@
+{
+  "skill": "fme-tse",
+  "version_skill_evaluee": "0.1",
+  "note": "Skill en brouillon (0.1) : ces évals servent aussi de base au passage /revue-socle (S-13 alimente S-12). Le risque est le sur-déclenchement sur les mots génériques « pipeline » / « ETL » hors contexte FME.",
+  "declencheurs": [
+    {
+      "prompt": "Reprends ce workflow .fmw, je dois le rendre maintenable sans son auteur.",
+      "pourquoi": "Reprise d'un .fmw orphelin : cas d'usage central, déclencheur nommé « rendre un workflow maintenable »."
+    },
+    {
+      "prompt": "Documente ce flux ETL FME.",
+      "pourquoi": "Documentation d'un workflow FME : doit suivre la fiche-outil (règle 1), même sans le mot « fiche »."
+    },
+    {
+      "prompt": "À quoi sert ce PythonCaller dans le workflow ?",
+      "pourquoi": "Lecture d'un transformer / code Python embarqué : déclencheur explicite."
+    },
+    {
+      "prompt": "Liste les dépendances Python de ce .fmw avant que je le déploie sur FME Flow.",
+      "pourquoi": "Dépendances Python + déploiement FME Flow : deux déclencheurs nommés."
+    },
+    {
+      "prompt": "Explique ce que font le FeatureReader, le Bufferer et le FeatureWriter de ce traitement.",
+      "pourquoi": "Description de transformers, entrées/sorties : règle 2 (workflow non documenté tant qu'entrées ET sorties ne sont pas décrites)."
+    },
+    {
+      "prompt": "Comment publier ce workflow sur FME Server ?",
+      "pourquoi": "Déploiement FME Server : déclencheur nommé."
+    }
+  ],
+  "non_declencheurs": [
+    {
+      "prompt": "Reprojette cette couche en Lambert-93 et valide sa géométrie avant écriture.",
+      "pourquoi": "Règles SIG génériques (SRC, validité) : relèvent de conventions-sig-tse, pas de FME.",
+      "skill_attendu": "conventions-sig-tse"
+    },
+    {
+      "prompt": "Génère un widget Experience Builder pour afficher les emprises.",
+      "pourquoi": "Développement ArcGIS/ExB : relève de environnement-arcgis-tse.",
+      "skill_attendu": "environnement-arcgis-tse"
+    },
+    {
+      "prompt": "Écris un pipeline GitHub Actions pour lancer mes tests Python à chaque push.",
+      "pourquoi": "« pipeline » au sens CI/CD, aucun rapport avec FME : contrôle du sur-déclenchement sur « pipeline / ETL »."
+    },
+    {
+      "prompt": "Résume ce compte rendu de réunion en cinq points.",
+      "pourquoi": "Tâche bureautique générique : ne doit déclencher aucun skill."
+    }
+  ]
+}
