@@ -98,6 +98,6 @@ borner à ~6-7 décimales, sans s'appuyer sur un membre `crs`. La sortie en
 ## Ce qui n'est pas couvert
 
 Administration de la plateforme ArcGIS Enterprise, publication de services,
-droits et licences → skill `environnement-arcgis-tse` (à venir).
-Conventions de workflows FME → skill `fme-tse` (à venir).
+droits et licences → skill `environnement-arcgis-tse`.
+Conventions de workflows FME → skill `fme-tse`.
 Règles d'orchestration des agents (ADR, revue, rôles) → socle `geoid-socle`.

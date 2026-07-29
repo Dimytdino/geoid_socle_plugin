@@ -32,7 +32,7 @@ Une connaissance vit à un seul étage.
 
 | Skill | Version | Date | Mainteneur | Source (master) | Dernière revue |
 |-------|---------|------|------------|-----------------|----------------|
-| `conventions-sig-tse` | 1.1 | 2026-06 | directeur du pôle | CHARTE §3 et §4 (master ; ce skill en est la copie dérivée, à régénérer à chaque amendement de la CHARTE) | 2026-06 (amendement CHARTE §3 — SRC format d'échange / GeoJSON 4326, socle 0.3.1) |
+| `conventions-sig-tse` | 1.2 | 2026-07 | directeur du pôle | CHARTE §3 et §4 (master ; ce skill en est la copie dérivée, à régénérer à chaque amendement de la CHARTE) | 2026-07-29 (S-10 : renvois « (à venir) » retirés — `environnement-arcgis-tse` et `fme-tse` existent désormais ; sync CHARTE §3-§4 revérifiée OK ; re-package pour claude.ai). Avant : 2026-06 (amendement CHARTE §3 — GeoJSON 4326, socle 0.3.1) |
 | `fme-tse` | 0.1 (actif — complétion en cours) | 2026-06 | Kilian (contenu conventionnel) | Pilote « documentation FME » (ADR-002) — partie « structure de fiche » issue de la fiche covisibilité ; conventions de nommage/emplacement/staging/journalisation **à compléter par Kilian** (étiquetées comme telles dans le SKILL, §« Conventions à compléter ») | À passer en `/revue-socle` |
 | `environnement-arcgis-tse` | 0.1 (actif — complétion en cours) | 2026-06 | Fateh + Dimitry | Interview Dimitry (2026-06, `/creer-skill`) ; faits d'environnement recoupés avec ADR-001 du dépôt `nemelios_ags` (Enterprise 11.3, ExB Dev Edition 1.17, EPSG:2154). **À confirmer avec Fateh** : nombre d'applications métier, liste des intervenants ArcGIS, procédure VDI pas-à-pas (points périphériques, n'affectant pas les règles de standard de code) | 2026-06 (création, critique APPROUVÉ) |
 
