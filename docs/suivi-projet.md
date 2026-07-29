@@ -27,6 +27,12 @@ dans `geoid:cadrer-projet`, gabarit `.mcp.json`, consigne de sécurité au
 template). Itération de contenu, noms gelés — `stable` reste à 0.5.0.
 Tests d'intégrité verts (10 blocs).
 
+**0.5.2** (S-10, régénération du skill dérivé `conventions-sig-tse` 1.1 → 1.2)
+préparée le 2026-07-29 : renvois « (à venir) » retirés, sync CHARTE §3-§4
+revérifiée. Bump de contenu (alignement strict ADR-001c). **À publier par le
+mainteneur** : tag `0.5.2` + pré-release `latest`, et re-packaging/republication
+du `.skill` sur claude.ai. Noms gelés — `stable` reste à 0.5.0.
+
 ## 1. Roadmap / backlog
 
 | ID | Tâche | Priorité | Responsable / agent | Statut | Échéance |
@@ -40,7 +46,7 @@ Tests d'intégrité verts (10 blocs).
 | S-07 | Trancher ADR-001d : périmètre MCP au cadrage (PostGIS RO — étude/analyse ; FME Flow MCP conditionné à FME 2026.2 — pipeline ; puis étape MCP dans `/cadrer-projet`, gabarit `.mcp.json`, consigne « identifiants RO, jamais en clair ») | Moyenne | architecte + D. Grohan | Terminé (2026-07-21) — ADR-001d tranché (ADR-001 §8) ; étape MCP + gabarit + consigne livrés en 0.5.1 | 2026-07-21 |
 | S-08 | Veille ArcGIS Location Services MCP (bêta Esri du 2026-06-29) : critères de sortie de veille | Basse | mainteneur | En cours | — |
 | S-09 | Migrer les projets existants vers le mode plugin | Haute | mainteneur / équipes | Sans objet (2026-07-21) — aucun projet aval à migrer (table rase confirmée, cf. ADR-001a). Outillage conservé (checklist CHANGELOG 0.5.0 + `scripts/verifier_migration_plugin.py`) au cas où un ancien clone referait surface | — |
-| S-10 | Re-packager et faire republier `conventions-sig-tse.skill` dans claude.ai (master/dérivé) | Moyenne | mainteneur | À faire | — |
+| S-10 | Re-packager et faire republier `conventions-sig-tse.skill` dans claude.ai (master/dérivé) | Moyenne | mainteneur | Prêt (2026-07-29) — sync CHARTE §3-§4 revérifiée (à jour) ; skill régénéré 1.1 → 1.2 (renvois « (à venir) » périmés retirés) ; `.skill` re-packagé via `scripts/packager_skill.py` (artefact local, non versionné) ; bump socle 0.5.2 (contenu plugin). **Reste l'action mainteneur/admin** : pousser tag `0.5.2` + pré-release `latest`, et faire publier le `.skill` sur claude.ai par l'admin de l'organisation | — |
 | S-11 | Activer le sandbox OS (`settings.json`, bubblewrap) après test sur un poste WSL2 | Moyenne | mainteneur | Bloqué (2026-07-21) — `bubblewrap` non installable sur le poste courant (droits admin/sudo indisponibles). Squelette prêt dans `settings.json` ; reste `apt install bubblewrap` + test du confinement + `enabled:true`, sur un poste avec droits admin (ou via l'IT). Ne PAS passer `enabled:true` sans bwrap (`failIfUnavailable:false` → sandbox silencieusement inopérant) | — |
 | S-12 | Arbitrer le statut des skills brouillons dans `plugins/geoid/skills/` (actifs dès que le plugin est installé/rechargé — à confirmer) | Basse | mainteneur | Terminé (2026-07-29) — prémisse **confirmée** (doc Claude Code : skills de plugin tous actifs à l'install, aucune désactivation par skill ; `skillOverrides` ne s'applique pas aux skills de plugin). Arbitrage **Option A** : on assume l'état actif — les deux 0.1 reclassés « actif — complétion en cours » (contenu jugé sûr, manques explicitement étiquetés « à compléter/à confirmer »), règle posée dans le registre. Complétions restant côté experts : nommage/emplacement/staging/journalisation FME (Kilian), infos d'environnement ArcGIS (Fateh) — suivies au registre, hors S-12 | 2026-07-29 |
 | S-13 | Construire les évaluations de déclenchement des skills (jeux de prompts déclencheurs / non-déclencheurs) | Basse | mainteneur | Terminé (2026-07-28) — harnais `evals/` : un jeu par skill publié (`<nom>.eval.json`, déclencheurs + non-déclencheurs frontière/hors-périmètre), validateur `scripts/evaluer_declenchement.py` (structure + couverture, mode `--rapport` pour le test manuel), test CI `tests/test_evaluer_declenchement.py` (5ᵉ test), protocole `evals/README.md`. Outillage mainteneur (hors plugin) → pas de bump de version. Reste à jouer le test de déclenchement RÉEL en conversation (grille `evals/README.md`) | 2026-07-28 |
