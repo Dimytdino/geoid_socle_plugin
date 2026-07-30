@@ -131,8 +131,9 @@ l'entretien, et crée `docs/suivi-projet.md` depuis
 `templates/suivi-projet.template.md` (roadmap initiale = premières
 tâches identifiées pendant l'entretien). Règles :
 - renseigne la ligne de version en en-tête (ADR-001c) : version du plugin
-  `geoid` installée (marketplace, = contenu de `SOCLE_VERSION` au moment
-  de la bascule) et version du template résiduel mergée (dernier merge du
+  `geoid` installée (indiquée par `/plugin`, ou injectée au démarrage de
+  session par le hook `geoid` — ne PAS chercher un `SOCLE_VERSION`, absent
+  d'un dépôt projet) et version du template résiduel mergée (dernier merge du
   dépôt template dans le projet) ;
 - reporte la composition validée à l'Étape 2 dans la table `§5 Équipe
   d'agents` : elle est **normative** (l'orchestrateur ne délègue qu'aux

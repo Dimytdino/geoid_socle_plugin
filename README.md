@@ -40,7 +40,8 @@ geoid-socle/
 │   │   │   ├── chef_projet.md       backlog, risques, KPI, reporting
 │   │   │   └── mentor.md            pédagogie — explique, ne fait jamais à la place
 │   │   ├── commands/                geoid:cadrer-projet, geoid:cloturer-session
-│   │   └── skills/                  skills d'organisation, chargés par Claude Code
+│   │   ├── skills/                  skills d'organisation, chargés par Claude Code
+│   │   └── hooks/                   garanties exécutables (PreToolUse secrets, SessionStart)
 │   └── geoid-meta/                  PLUGIN mainteneur (skills du socle)
 │       ├── .claude-plugin/plugin.json
 │       ├── agents/                  interviewer/redacteur/critique_skill
