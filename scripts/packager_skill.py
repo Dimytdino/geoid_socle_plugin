@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Packager un skill GéoID en fichier .skill installable.
-Usage : python3 scripts/packager_skill.py .claude/skills/nom-du-skill/
+Usage : python3 scripts/packager_skill.py plugins/geoid/skills/nom-du-skill/
 """
 import sys, zipfile, pathlib
 
@@ -13,7 +13,7 @@ DOSSIERS_AUTORISES = {"references"}
 
 def main():
     if len(sys.argv) != 2:
-        sys.exit("Usage : python3 scripts/packager_skill.py .claude/skills/nom-du-skill/")
+        sys.exit("Usage : python3 scripts/packager_skill.py plugins/geoid/skills/nom-du-skill/")
     src = pathlib.Path(sys.argv[1]).resolve()
     if not (src / "SKILL.md").exists():
         sys.exit(f"Erreur : pas de SKILL.md dans {src}")
