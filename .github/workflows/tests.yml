@@ -1,4 +1,4 @@
-# CI du socle : les cinq tests tournent a chaque push et pull request.
+# CI du socle : les six tests tournent a chaque push et pull request.
 # La dependance 'markdown' est installee pour que test_generer_doc_html
 # s'execute reellement (sans elle, il sort en SKIP silencieusement vert).
 name: tests
@@ -30,3 +30,5 @@ jobs:
         run: python3 tests/test_verifier_migration_plugin.py
       - name: Test des evals de declenchement des skills
         run: python3 tests/test_evaluer_declenchement.py
+      - name: Test de la synchro socle vers template
+        run: python3 tests/test_sync_template.py
