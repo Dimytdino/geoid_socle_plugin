@@ -44,7 +44,7 @@ Ce point n'avait pas été explicitement tranché à l'ADR-001. Il l'est ici.
 - **−** Re-mélange les deux canaux que l'ADR-001 a séparés.
 
 ### Option B — Template dédié « slim »
-Un nouveau dépôt `geoid-projet-template` (marqué *template* GitHub) ne
+Un nouveau dépôt `geoid_agents_template` (marqué *template* GitHub) ne
 contenant que l'utile projet : `CHARTE.md`, `.claude/settings.json` (plugin
 `geoid` déjà déclaré), `templates/` doc, `specialisations/`, `CLAUDE.md`
 bootstrap, guide de démarrage.
@@ -71,7 +71,7 @@ chargés d'identification, multiplication des projets).
 
 ## 4. Conséquences
 
-- **Nouveau dépôt** `geoid-projet-template` (org TSE-Pole-Geomatique, privé,
+- **Nouveau dépôt** `geoid_agents_template` (org TSE-Pole-Geomatique, privé,
   marqué *template*) : le résiduel + `.claude/settings.json` portant
   `extraKnownMarketplaces` (marketplace `geoid-socle`) et `enabledPlugins`
   (`geoid@geoid-socle`, `autoUpdate` activé). Le plugin s'installe alors au
