@@ -5,7 +5,8 @@
      docs/suivi-projet.md (qui porte sur la valeur, les projets figés et
      la gouvernance) : celui-ci porte sur la CONCEPTION AGENTIQUE et
      l'exécutabilité réelle du socle. Les deux se complètent.
-     Auditeur : revue externe (ingénierie agentique). Non commité.
+     Auditeur : revue externe (ingénierie agentique). Versionné le
+     2026-07-30 (conservé avec le code qu'il critique ; traçabilité).
      ════════════════════════════════════════════════════════════════ -->
 
 # Audit du socle GéoID — fond et forme
