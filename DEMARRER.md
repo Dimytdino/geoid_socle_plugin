@@ -44,6 +44,7 @@ claude
   python3 tests/test_generer_doc_html.py
   python3 tests/test_verifier_migration_plugin.py
   python3 tests/test_evaluer_declenchement.py
+  python3 tests/test_sync_template.py
   ```
 - Versionnage : **alignement strict** (ADR-001c) — `SOCLE_VERSION` = version
   de la marketplace = version de chaque `plugin.json`. Le bloc de cohérence
@@ -61,17 +62,23 @@ Deux canaux (ADR-001 §4.4) :
   Les projets l'ont en `autoUpdate` : la mise à jour est automatique au
   démarrage. Publication d'une nouvelle version = merge sur `main` (+ tag de
   repère, cf. CHANGELOG).
-- **Résiduel** (CHARTE, `settings.json` projet, `templates/`,
-  `specialisations/`) — le socle en est la **source de vérité** ; il est
-  répercuté dans `geoid_agents_template`, d'où les projets le reçoivent
-  (copie au départ, `git merge` ensuite). Répercussion via
-  `scripts/sync_template.py`, à lancer sur un clone du template au moment
-  d'un release :
+- **Résiduel** (CHARTE, `templates/`, `specialisations/`) — le socle en est
+  la **source de vérité** ; il est répercuté dans `geoid_agents_template`,
+  d'où les projets le reçoivent (copie au départ, `git merge` ensuite).
+  Répercussion via `scripts/sync_template.py`, à lancer sur un clone du
+  template au moment d'un release :
   ```bash
   python3 scripts/sync_template.py --check <clone_geoid_agents_template>   # détecte la dérive
   python3 scripts/sync_template.py --apply <clone_geoid_agents_template>   # recopie le résiduel
   ```
   Puis committer/pousser dans le clone (sens unidirectionnel : le socle fait foi).
+
+Le `.claude/settings.json` **n'est pas** dans ce résiduel : celui du template
+est **propre au projet** (permissions + déclaration du plugin) et diffère de
+celui du socle (permissions mainteneur). Un durcissement de permissions
+destiné aux projets se porte **à la main** sur le `settings.json` du template
+(ADR-003 ; décision de ne pas le synchroniser, pour ne pas écraser la version
+projet).
 
 ---
 

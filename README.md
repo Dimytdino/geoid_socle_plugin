@@ -59,7 +59,11 @@ geoid-socle/
 ├── scripts/
 │   ├── packager_skill.py            empaquette un skill en .skill (canal claude.ai)
 │   ├── generer_doc_html.py          génère une fiche-outil HTML autoportante (Markdown → HTML)
-│   └── verifier_migration_plugin.py détecte les doublons plugin/local d'un projet (migration 0.5.0)
+│   ├── verifier_migration_plugin.py détecte les doublons plugin/local d'un projet (migration 0.5.0)
+│   ├── evaluer_declenchement.py     valide les jeux d'évals de déclenchement des skills
+│   └── sync_template.py             synchronise le résiduel socle → geoid_agents_template
+├── evals/                           jeux de déclenchement des skills (déclencheurs / non-déclencheurs)
+├── docs/                            suivi-projet, ADR (adr/), notes de décision
 ├── tests/                           tests d'intégrité et unitaires (stdlib)
 ├── requirements-dev.txt             dépendance de dev verrouillée (markdown)
 └── .github/workflows/tests.yml      CI : les tests tournent à chaque push/PR
@@ -149,10 +153,9 @@ Le mode `bypassPermissions` est réservé aux environnements isolés
   (alignement strict). Chaque projet note dans l'en-tête de son `CLAUDE.md`
   **deux champs** : version du plugin `geoid` installé (marketplace) et
   version du template résiduel mergé.
-- **Tests** : `python3 tests/test_packager_skill.py`,
-  `python3 tests/test_socle_integrity.py`,
-  `python3 tests/test_generer_doc_html.py` et
-  `python3 tests/test_verifier_migration_plugin.py` avant push. La CI
+- **Tests** (six, `python3 tests/<nom>.py` avant push) : `test_socle_integrity`,
+  `test_packager_skill`, `test_generer_doc_html`, `test_verifier_migration_plugin`,
+  `test_evaluer_declenchement`, `test_sync_template`. La CI
   (`.github/workflows/tests.yml`) les rejoue à chaque push/PR, avec la
   dépendance `markdown` installée (`requirements-dev.txt`) pour qu'aucun
   test ne soit ignoré en silence.

@@ -83,7 +83,7 @@ Protocole (méthode §4, étape 4) :
 | —    | environnement-arcgis-tse | / | / | — | — |
 | —    | fme-tse | / | / | — | — |
 
-> `fme-tse` et `environnement-arcgis-tse` sont en **0.1 (brouillon)** : ces
+> `fme-tse` et `environnement-arcgis-tse` sont en **0.1 (actif — complétion en cours)** (S-12) : ces
 > évals servent de base d'entrée au passage `geoid-meta:revue-socle` (S-13
 > alimente S-12).
 

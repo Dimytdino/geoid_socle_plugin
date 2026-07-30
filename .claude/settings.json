@@ -4,8 +4,6 @@
     "allow": [
       "Bash(ls:*)",
       "Bash(cat:*)",
-      "Bash(grep:*)",
-      "Bash(find:*)",
       "Bash(pytest:*)",
       "Bash(python3 tests/*)",
       "Bash(python3 scripts/packager_skill.py *)",

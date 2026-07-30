@@ -1,6 +1,6 @@
 {
   "skill": "conventions-sig-tse",
-  "version_skill_evaluee": "1.1",
+  "version_skill_evaluee": "1.2",
   "note": "Le risque principal est le SOUS-déclenchement : le skill doit s'activer même quand l'utilisateur ne parle ni de SRC ni de format. Les non-déclencheurs vérifient qu'il ne parasite pas l'administration ArcGIS, la structure de fiche FME, ni du SQL non spatial.",
   "declencheurs": [
     {
