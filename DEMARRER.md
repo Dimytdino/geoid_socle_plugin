@@ -64,8 +64,14 @@ Deux canaux (ADR-001 §4.4) :
 - **Résiduel** (CHARTE, `settings.json` projet, `templates/`,
   `specialisations/`) — le socle en est la **source de vérité** ; il est
   répercuté dans `geoid_agents_template`, d'où les projets le reçoivent
-  (copie au départ, `git merge` ensuite). Le mécanisme de synchro
-  socle → template est suivi en **S-15**.
+  (copie au départ, `git merge` ensuite). Répercussion via
+  `scripts/sync_template.py`, à lancer sur un clone du template au moment
+  d'un release :
+  ```bash
+  python3 scripts/sync_template.py --check <clone_geoid_agents_template>   # détecte la dérive
+  python3 scripts/sync_template.py --apply <clone_geoid_agents_template>   # recopie le résiduel
+  ```
+  Puis committer/pousser dans le clone (sens unidirectionnel : le socle fait foi).
 
 ---
 
