@@ -67,23 +67,28 @@ geoid-socle/
 
 ## Démarrer un projet
 
-1. Créer un dépôt depuis ce template (GitHub → *Use this template*) —
-   il fournit `CHARTE.md`, le `CLAUDE.md` bootstrap, `settings.json`,
-   `templates/` et `specialisations/`.
-2. `cd <projet> && claude`
-3. Installer le plugin d'équipe depuis la marketplace :
-   `/plugin marketplace add TSE-Pole-Geomatique/geoid_socle_plugin`, puis
-   `/plugin install geoid@geoid-socle`. Les agents, skills et commandes du
-   pôle deviennent disponibles (préfixés `geoid:`).
-4. Lancer **`/cadrer-projet`** : entretien guidé, génération du
+> Depuis la 1.0.0 (ADR-003), **ce dépôt n'est plus le template de projet**.
+> Les projets partent du dépôt dédié **`geoid_agents_template`**.
+
+1. Créer un dépôt depuis le template **`geoid_agents_template`**
+   (GitHub → *Use this template*) — il fournit `CHARTE.md`, le `CLAUDE.md`
+   bootstrap, `.claude/settings.json`, `templates/` et `specialisations/`.
+2. `cd <projet> && claude` : le plugin `geoid` **s'installe automatiquement**
+   au démarrage (il est déclaré dans le `settings.json` du template — aucune
+   commande `/plugin` à taper) ; agents, skills et commandes deviennent
+   disponibles (préfixés `geoid:`).
+3. Lancer **`/cadrer-projet`** : entretien guidé, génération du
    `CLAUDE.md` et de `docs/suivi-projet.md`. La composition d'équipe
    retenue est inscrite au **§5 normatif** du CLAUDE.md (l'orchestrateur ne
    délègue qu'à ces agents) ; la seule spécialisation retenue est copiée
    dans `.claude/agents/` du projet.
-5. **Quitter et relancer `claude`** : plugin, CLAUDE.md et spécialisation
+4. **Quitter et relancer `claude`** : plugin, CLAUDE.md et spécialisation
    sont chargés au démarrage de la session, pas à chaud.
-6. Si des points `🔧 À ARBITRER` existent : faire instruire les ADR par
+5. Si des points `🔧 À ARBITRER` existent : faire instruire les ADR par
    l'`architecte` avant les tâches qui en dépendent (le reste avance).
+
+Le guide pas à pas complet vit dans le `DEMARRER.md` du dépôt
+`geoid_agents_template`.
 
 ## Clôturer une session
 
