@@ -5,7 +5,7 @@ les comparer. Objectif : juger le socle à son impact réel, pas à sa
 qualité théorique. À remplir au fil de l'eau et à consolider en fin de
 pilote.
 
-Mainteneur du socle : à désigner. Sponsor : directeur du pôle.
+Mainteneur du socle : **Dimitry Grohan** (nommé le 2026-07-30 ; suppléant à désigner, S-16). Sponsor : directeur du pôle.
 
 ---
 

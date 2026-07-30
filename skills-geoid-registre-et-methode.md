@@ -2,7 +2,7 @@
 
 Document de travail du pôle GéoID (TSE). Il liste les skills à créer, donne
 la méthode pour les rédiger efficacement, et fournit la trame à remplir.
-Mainteneur : à désigner (proposition : Responsable de Projets Identification).
+Mainteneur : **Dimitry Grohan** (nommé le 2026-07-30). Suppléant : à désigner (S-16).
 
 ---
 

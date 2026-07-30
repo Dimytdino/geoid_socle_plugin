@@ -3,19 +3,28 @@
 Format inspiré de Keep a Changelog. La version vit aussi dans `SOCLE_VERSION`.
 Chaque projet note la version du socle utilisée dans son `CLAUDE.md`.
 
-## 0.5.2 — 2026-07
-Itération de **contenu** sur le canal `latest` (identifiants d'interface
-gelés, ADR-001 §7, aucun renommage). Régénération du skill dérivé
-`conventions-sig-tse` (S-10) en vue de sa republication sur claude.ai.
+## 1.0.0 — 2026-07
+**Première version officiellement supportée du socle** (décision du
+2026-07-30). Passage en `1.0.0` de la version qui allait être publiée
+(ex-`0.5.2`) : le socle est validé à l'usage (audit du 2026-07-30 — deux
+pilotes aboutis), le **template de projet dédié** est en place (ADR-003 —
+dépôt `geoid_agents_template`), et un **mainteneur est nommé** (Dimitry
+Grohan ; suppléant à désigner). Alignement strict des versions maintenu
+(ADR-001c). Identifiants d'interface toujours gelés (ADR-001 §7).
 
 ### Modifié
 - **Skill `conventions-sig-tse` 1.1 → 1.2** : section « Ce qui n'est pas
   couvert » — renvois « (à venir) » retirés (`environnement-arcgis-tse` et
   `fme-tse` existent désormais). Sync CHARTE §3-§4 (master) revérifiée : à
   jour. Aucune règle modifiée.
+- **Modèle de démarrage projet** (ADR-003) : le dépôt du socle n'est plus un
+  template ; création de projet via `geoid_agents_template` (plugin déclaré
+  en `settings.json`, installation automatique). `DEMARRER.md`, `README.md`
+  et le `CLAUDE.md` bootstrap réalignés (fin de l'installation `/plugin`
+  manuelle sur le chemin nominal).
 
 ### Publication (à faire — mainteneur)
-- Pousser le tag `0.5.2` + pré-release canal `latest`.
+- Pousser le tag `1.0.0` + release.
 - **claude.ai** : re-packager (`scripts/packager_skill.py`) et faire
   republier le `.skill` de `conventions-sig-tse` par l'admin de
   l'organisation (canal distinct de la marketplace ; artefact non versionné).
