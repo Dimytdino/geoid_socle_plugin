@@ -1,200 +1,84 @@
-# DÉMARRER — initialiser un projet GéoID pas à pas
+# DÉMARRER — socle GéoID (dépôt de développement)
 
-Ce guide explique comment créer et démarrer un projet à partir du socle
-`geoid-socle`. Du poste vide au premier livrable. Garde-le ouvert à côté
-de toi la première fois.
+Ce dépôt est le **socle** du pôle GéoID : il développe le plugin `geoid`
+(et `geoid-meta`) publié via la **marketplace**, et il maintient le contenu
+« résiduel » repris par le template de projet.
 
-> En une ligne : **template → `claude` → installer le plugin `geoid` →
-> `/cadrer-projet` → trancher les ADR → produire → revue avant de livrer.**
-
----
-
-## Étape 0 — Prérequis (une seule fois par poste)
-
-- Un terminal avec **Node.js** installé.
-- **Claude Code** : `npm install -g @anthropic-ai/claude-code`, puis
-  `claude` une première fois pour se connecter avec le compte Claude TSE.
-- Accès au dépôt **TSE-Pole-Geomatique/geoid_socle_plugin** sur GitHub.
-- **Sous Windows** : travailler dans **WSL**, et garder les dépôts dans le
-  home WSL (`~/...`), jamais dans `/mnt/c/...` (plus lent, problèmes de
-  permissions).
-
-Vérifier que tout est prêt :
-```bash
-node --version      # doit répondre une version
-claude --version    # doit répondre une version
-```
+> **Ce dépôt n'est plus un template de projet** (décision ADR-003). Pour
+> créer un projet, on part désormais du dépôt dédié `geoid_agents_template`
+> (voir ci-dessous). Le socle reste le dépôt de dev + la marketplace.
 
 ---
 
-## Étape 1 — Créer le dépôt du projet depuis le template
+## Créer un projet GéoID  → dépôt `geoid_agents_template`
 
-Sur **GitHub** :
-1. Ouvrir le dépôt `geoid_socle_plugin`.
-2. Bouton **Use this template** → *Create a new repository*.
-3. Nommer le projet en minuscules-tirets (ex. `pipeline-rpg`,
-   `widget-export-geojson`, `orion-poc`).
-4. Owner = l'organisation **TSE-Pole-Geomatique**, visibilité **Private**.
-5. *Create repository*.
+Le parcours de création/prise en main d'un projet vit **dans le template** :
 
-Puis cloner en local (dans WSL) :
+1. Sur GitHub, ouvrir **`TSE-Pole-Geomatique/geoid_agents_template`**.
+2. **Use this template** → *Create a new repository* (Owner = TSE-Pole-Geomatique, Private).
+3. Cloner, puis `claude` : le plugin `geoid` **s'installe automatiquement**
+   (il est déclaré dans le `.claude/settings.json` du template — aucune
+   commande `/plugin` à taper), puis `/cadrer-projet`.
+
+Le guide pas à pas complet (prérequis, cadrage, production, revue, clôture,
+règles d'or) est le **`DEMARRER.md` du dépôt `geoid_agents_template`**. Il
+n'est pas dupliqué ici pour éviter la dérive entre deux copies.
+
+---
+
+## Travailler sur le socle (mainteneur)
+
 ```bash
 cd ~
-git clone https://github.com/TSE-Pole-Geomatique/<mon-projet>.git
-cd <mon-projet>
-```
-
----
-
-## Étape 2 — Lancer Claude Code et cadrer le projet
-
-```bash
+git clone https://github.com/TSE-Pole-Geomatique/geoid_socle_plugin.git
+cd geoid_socle_plugin
 claude
 ```
-Au premier lancement dans le dossier, accepter de faire confiance au dépôt
-(c'est notre template interne).
 
-Installer ensuite le plugin d'équipe `geoid` depuis la marketplace du pôle
-(une fois par projet) — il apporte les agents, skills et commandes :
-```
-/plugin marketplace add TSE-Pole-Geomatique/geoid_socle_plugin
-/plugin install geoid@geoid-socle
-```
-Puis lancer le cadrage :
-```
-/cadrer-projet
-```
-
-L'entretien guidé couvre, par petits groupes de questions :
-- **identité** (nom, famille, commanditaire) ;
-- **objectif** et critères de réussite ;
-- **données** (sources, millésimes, sensibilité — foncier = confidentiel) ;
-- **livrables** ;
-- **environnement technique avec les versions exactes** (« à vérifier »
-  plutôt que deviner) ;
-- **existant à réutiliser** (règle 0) ;
-- **décisions actées vs à arbitrer** (chaque point ouvert → un ADR) ;
-- **équipe humaine et niveaux** (le mentor s'en sert pour calibrer).
-
-À la fin : le `CLAUDE.md` du projet et `docs/suivi-projet.md` sont
-générés. Les agents viennent du plugin `geoid` (déjà installé) ; le
-cadrage inscrit la composition retenue au **§5 normatif** du CLAUDE.md —
-l'orchestrateur ne délègue qu'à ces agents — et copie la seule
-spécialisation du développeur retenue dans `.claude/agents/` du projet.
-**Quitter puis relancer `claude`** : le nouveau CLAUDE.md et la
-spécialisation ne sont chargés qu'au démarrage d'une session.
-
-> Familles et agents typiques :
-> - **étude / analyse SIG** → analyste_sig, revieweur, documentaliste, mentor
-> - **pipeline de données** → architecte, developpeur_etl, revieweur, documentaliste, mentor
-> - **développement applicatif** → architecte, developpeur_back_geo / front_carto, revieweur, documentaliste, chef_projet, mentor
-> - **pilotage / transverse** → chef_projet, documentaliste, mentor
-
----
-
-## Étape 3 — Faire trancher les décisions ouvertes (ADR)
-
-Tant qu'un point est marqué `🔧 À ARBITRER` dans le `CLAUDE.md`, les
-tâches qui **dépendent de cette décision** sont bloquées — le reste
-(analyses, doc, tests, maquettes) avance. L'architecte instruit, **c'est
-toi qui tranches**, et la décision est actée au journal.
-```
-Utilise le sous-agent architecte pour instruire ADR-001 et ADR-002.
-```
-
----
-
-## Étape 4 — Produire
-
-Délègue le travail substantiel aux agents. Les actions sensibles
-(base de données, `git push`, réseau) demanderont ta confirmation ; les
-actions irréversibles exigent ton accord écrit explicite.
-```
-Implémente [la tâche], conformément aux ADR actés.
-```
-
----
-
-## Étape 5 — Comprendre en route (réflexe à prendre)
-
-Dès qu'une notion n'est pas claire, le mentor est là — il explique sur le
-code réel du projet, et ne fait jamais à ta place. Personne ne juge.
-```
-Utilise le sous-agent mentor pour m'expliquer [ce fichier / cette erreur /
-ce concept] — je débute sur [sujet].
-```
-
----
-
-## Étape 6 — Revue, puis livraison
-
-Tout livrable **final** passe par le revieweur, puis par toi. Les
-corrections retournent à l'agent qui a produit, jamais au revieweur.
-```
-Fais passer [le livrable] en revue par le revieweur.
-```
-Après ta validation :
-```bash
-git add . && git commit -m "..."   # message en français, décrit le pourquoi
-git push                           # demande confirmation
-```
-
----
-
-## Étape 7 — Clôturer la session
-
-En fin de séance utile, mettre à jour le suivi du projet :
-```
-/cloturer-session
-```
-Le chef de projet (ou l'orchestrateur) met à jour la roadmap et les
-risques (`docs/suivi-projet.md`) et le journal des décisions
-(`CLAUDE.md`), **après ta validation**. À lancer volontairement, pas à
-chaque micro-session.
-
----
-
-## En cas de mise à jour du socle
-
-Depuis la 0.5.0, le socle se met à jour par **deux canaux** :
-
-- **Agents, skills et commandes** (plugin `geoid`) — par la marketplace :
-  ```
-  /plugin marketplace update geoid-socle
-  ```
-- **CHARTE, permissions, templates, spécialisations** (template résiduel) —
-  par merge git, une fois par projet ajouter le socle comme source :
+- Outillage mainteneur : plugin **`geoid-meta`** (commandes
+  `geoid-meta:creer-skill`, `geoid-meta:revue-socle`).
+- Tests d'intégrité avant push :
   ```bash
-  git remote add socle https://github.com/TSE-Pole-Geomatique/geoid_socle_plugin.git
+  python3 tests/test_socle_integrity.py
+  python3 tests/test_packager_skill.py
+  python3 tests/test_generer_doc_html.py
+  python3 tests/test_verifier_migration_plugin.py
+  python3 tests/test_evaluer_declenchement.py
   ```
-  puis à chaque évolution :
-  ```bash
-  git fetch socle && git merge socle/main
-  ```
-  Résoudre les éventuels conflits sur le `CLAUDE.md` (il est propre au
-  projet).
-
-L'en-tête du `CLAUDE.md` porte les **deux versions** (plugin `geoid` /
-template résiduel) ; `/cloturer-session` signale un écart avec
-`SOCLE_VERSION`.
+- Versionnage : **alignement strict** (ADR-001c) — `SOCLE_VERSION` = version
+  de la marketplace = version de chaque `plugin.json`. Le bloc de cohérence
+  du test d'intégrité le vérifie.
+- Suivi opérationnel : `docs/suivi-projet.md` (roadmap, risques, journal des
+  décisions) ; ADR : `docs/adr/`.
 
 ---
 
-## Mémo des commandes
+## Comment le socle se diffuse et se met à jour
+
+Deux canaux (ADR-001 §4.4) :
+
+- **Plugin `geoid`** (agents, skills, commandes) — par la **marketplace**.
+  Les projets l'ont en `autoUpdate` : la mise à jour est automatique au
+  démarrage. Publication d'une nouvelle version = merge sur `main` (+ tag de
+  repère, cf. CHANGELOG).
+- **Résiduel** (CHARTE, `settings.json` projet, `templates/`,
+  `specialisations/`) — le socle en est la **source de vérité** ; il est
+  répercuté dans `geoid_agents_template`, d'où les projets le reçoivent
+  (copie au départ, `git merge` ensuite). Le mécanisme de synchro
+  socle → template est suivi en **S-15**.
+
+---
+
+## Mémo des commandes (mainteneur)
 
 | Commande | Quand |
 |----------|-------|
-| `geoid:cadrer-projet` | au démarrage d'un projet |
-| `geoid:cloturer-session` | en fin de séance utile |
-| `geoid-meta:creer-skill` | (mainteneur du socle) fabriquer un skill (interview → rédaction → critique) |
-| `geoid-meta:revue-socle` | (mainteneur du socle) avant un push significatif |
+| `geoid-meta:creer-skill` | fabriquer un skill (interview → rédaction → critique) |
+| `geoid-meta:revue-socle` | avant un push significatif |
+| `geoid:cadrer-projet` / `geoid:cloturer-session` | (côté projet) — voir le template |
 
-## Les règles d'or (rappel)
+## Rappels transverses
 
-1. **Confidentialité** : jamais de coordonnées de parcelles, d'identités
-   ou de stratégies de secteurs dans ce qui sort de TSE.
-2. **Validation humaine** : toute action irréversible exige ton accord.
-3. **Revue avant livraison** : aucun livrable final sans le revieweur.
-4. **Esprit critique** : un agent affirme avec aplomb même quand il se
-   trompe — vérifie ce qui compte.
-5. **Le mentor d'abord** : comprends avant de copier-coller.
+Les règles du pôle s'appliquent au socle comme aux projets : voir
+**`CHARTE.md`** (confidentialité foncière, validation des actions
+irréversibles, revue avant livraison, réutiliser avant de créer).
