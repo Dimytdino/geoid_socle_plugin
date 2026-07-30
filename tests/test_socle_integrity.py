@@ -106,7 +106,15 @@ for d in sorted(DOSSIER_SKILLS.iterdir()) if DOSSIER_SKILLS.exists() else []:
 # 7. Pas de secret evident commite — scanne tous les fichiers texte traques par git
 EXTENSIONS_TEXTE = {".md", ".py", ".txt", ".json", ".yml", ".yaml", ".sh", ".cfg", ".ini", ".env"}
 PATTERN_SECRET = re.compile(r"(password|mot de passe)\s*[:=]\s*\S+", re.I)
+# Fichiers dont le ROLE est de contenir ces motifs (le detecteur de secrets du
+# hook geoid et son test) : exclus du scan, sinon faux positif garanti.
+FICHIERS_MOTIFS_SECRET = {
+    "plugins/geoid/hooks/bloquer_secrets.py",
+    "tests/test_hooks.py",
+}
 for chemin in fichiers_traques:
+    if chemin in FICHIERS_MOTIFS_SECRET:
+        continue
     p = RACINE / chemin
     if p.suffix.lower() not in EXTENSIONS_TEXTE:
         continue
@@ -198,6 +206,45 @@ if gabarit_mcp.exists():
                              f"identifiant en dur (attendu : placeholder ${{VAR}})")
     except Exception as e:
         echecs.append(f"gabarit .mcp.json invalide : {e}")
+
+# 11. Master/derive (S-23, audit SS3.6) : le skill conventions-sig-tse est une
+#     copie derivee de la CHARTE SS3-SS4. Tout code EPSG cite dans la CHARTE
+#     doit figurer dans le skill : sinon un amendement CHARTE non repercute
+#     laisse une regle SRC perimee dans le derive (cause racine du bug 0.3.1).
+try:
+    charte = (RACINE / "CHARTE.md").read_text(encoding="utf-8")
+    skill_sig = (RACINE / "plugins/geoid/skills/conventions-sig-tse/SKILL.md").read_text(encoding="utf-8")
+    for code in sorted(set(re.findall(r"EPSG:\d+", charte))):
+        verifier(code in skill_sig,
+                 f"conventions-sig-tse : {code} present dans la CHARTE mais absent "
+                 f"du skill derive (master/derive desynchronise)")
+    verifier("fonci" in charte.lower() and "fonci" in skill_sig.lower(),
+             "conventions-sig-tse : confidentialite fonciere (CHARTE SS4) non refletee dans le skill")
+except Exception as e:
+    echecs.append(f"coherence CHARTE <-> skill : {e}")
+
+# 12. Coherence des versions (S-23) : la version d'un skill au registre
+#     (section « Skills publies ») doit egaler le champ version_skill_evaluee
+#     de son jeu d'evals. Attrape la derive du type eval 1.1 vs skill 1.2.
+try:
+    reg = (RACINE / "skills-geoid-registre-et-methode.md").read_text(encoding="utf-8")
+    seg = reg.split("### Skills publiés", 1)
+    publies_txt = seg[1].split("### Skills à créer", 1)[0] if len(seg) == 2 else ""
+    versions_registre = dict(re.findall(r"^\|\s*`([\w-]+)`\s*\|\s*(\d+\.\d+)", publies_txt, re.M))
+    dossier_evals = RACINE / "evals"
+    for f in sorted(dossier_evals.glob("*.eval.json")) if dossier_evals.exists() else []:
+        data = json.loads(f.read_text(encoding="utf-8"))
+        nom = data.get("skill")
+        vev = str(data.get("version_skill_evaluee", "")).strip()
+        vreg = versions_registre.get(nom)
+        verifier(vreg is not None,
+                 f"eval {f.name} : skill '{nom}' introuvable dans « Skills publiés » du registre")
+        if vreg is not None:
+            verifier(vev == vreg,
+                     f"eval {f.name} : version_skill_evaluee ({vev}) != version au registre "
+                     f"({vreg}) pour {nom}")
+except Exception as e:
+    echecs.append(f"coherence registre <-> evals : {e}")
 
 if echecs:
     print("ECHECS d'integrite :")
