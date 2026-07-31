@@ -18,10 +18,16 @@ Grohan ; suppléant à désigner). Alignement strict des versions maintenu
   `fme-tse` existent désormais). Sync CHARTE §3-§4 (master) revérifiée : à
   jour. Aucune règle modifiée.
 - **Modèle de démarrage projet** (ADR-003) : le dépôt du socle n'est plus un
-  template ; création de projet via `geoid_agents_template` (plugin déclaré
-  en `settings.json`, installation automatique). `DEMARRER.md`, `README.md`
-  et le `CLAUDE.md` bootstrap réalignés (fin de l'installation `/plugin`
-  manuelle sur le chemin nominal).
+  template ; création de projet via `geoid_agents_template` (marketplace et
+  plugin **déclarés** en `settings.json`). `DEMARRER.md`, `README.md` et le
+  `CLAUDE.md` bootstrap réalignés.
+  > **Rectificatif du 2026-07-31** : cette entrée annonçait une
+  > « installation automatique » du plugin. C'est inexact — `enabledPlugins`
+  > *active* le plugin mais n'installe pas de copie rattachée au projet, et
+  > une session peut démarrer sans aucune commande `/geoid:…` ni agent.
+  > Le chemin nominal comporte désormais une installation explicite
+  > (`claude plugin install geoid@geoid-socle --scope user`, une fois par
+  > poste), vérifiable par `claude plugin list`. Voir README §« Diagnostic ».
 
 ### Publication (à faire — mainteneur)
 - Pousser le tag `1.0.0` + release.

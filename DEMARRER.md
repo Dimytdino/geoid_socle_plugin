@@ -16,9 +16,13 @@ Le parcours de création/prise en main d'un projet vit **dans le template** :
 
 1. Sur GitHub, ouvrir **`TSE-Pole-Geomatique/geoid_agents_template`**.
 2. **Use this template** → *Create a new repository* (Owner = TSE-Pole-Geomatique, Private).
-3. Cloner, puis `claude` : le plugin `geoid` **s'installe automatiquement**
-   (il est déclaré dans le `.claude/settings.json` du template — aucune
-   commande `/plugin` à taper), puis `/cadrer-projet`.
+3. Cloner. Le `.claude/settings.json` du template déclare la marketplace et
+   **active** `geoid`, mais l'activation n'installe pas : faire une fois par
+   poste `claude plugin install geoid@geoid-socle --scope user`, vérifier
+   avec `claude plugin list` (version = `SOCLE_VERSION`, scope `user`), puis
+   relancer `claude` — une installation ne prend effet qu'au démarrage
+   suivant. Enfin `/geoid:cadrer-projet` (les commandes de plugin sont
+   préfixées par le nom du plugin).
 
 Le guide pas à pas complet (prérequis, cadrage, production, revue, clôture,
 règles d'or) est le **`DEMARRER.md` du dépôt `geoid_agents_template`**. Il
@@ -58,10 +62,16 @@ claude
 
 Deux canaux (ADR-001 §4.4) :
 
-- **Plugin `geoid`** (agents, skills, commandes) — par la **marketplace**.
-  Les projets l'ont en `autoUpdate` : la mise à jour est automatique au
-  démarrage. Publication d'une nouvelle version = merge sur `main` (+ tag de
-  repère, cf. CHANGELOG).
+- **Plugin `geoid`** (agents, skills, commandes, hooks) — par la
+  **marketplace**. Publication d'une nouvelle version = merge sur `main`
+  (+ tag de repère, cf. CHANGELOG). Côté poste, `autoUpdate` rafraîchit le
+  clone de la marketplace ; la copie installée du plugin, elle, peut rester
+  en arrière — d'où le contrôle `claude plugin list` (version attendue =
+  `SOCLE_VERSION`) et, si besoin, `claude plugin update geoid@geoid-socle`
+  puis relance de `claude`. Cas piégeux observé : plusieurs copies d'un même
+  plugin coexistent par scope (`user` / `project` / `local`) ; une copie
+  `local` rattachée à un autre dépôt affiche *enabled* sans rien charger
+  dans le projet courant (voir README, « Diagnostic »).
 - **Résiduel** (CHARTE, `templates/`, `specialisations/`) — le socle en est
   la **source de vérité** ; il est répercuté dans `geoid_agents_template`,
   d'où les projets le reçoivent (copie au départ, `git merge` ensuite).
