@@ -3,7 +3,6 @@
     "defaultMode": "default",
     "allow": [
       "Bash(ls:*)",
-      "Bash(cat:*)",
       "Bash(pytest:*)",
       "Bash(python3 tests/*)",
       "Bash(python3 scripts/packager_skill.py *)",

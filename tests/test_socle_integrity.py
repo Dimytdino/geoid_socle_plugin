@@ -41,6 +41,23 @@ try:
     for regle in permissions.get("allow", []):
         verifier(not re.match(r"Bash\(python3?[:\s]\*?\)?$", regle),
                  f"settings.json : interpreteur generaliste en allow : {regle}")
+        # Un lecteur de fichiers en allow rend les deny (cat *.env*, *.pem...)
+        # inoperants sur le chemin le plus evident : la lecture d'un secret ne
+        # se ferme pas par liste (head/less/xxd la contournent), mais elle ne
+        # doit pas non plus etre auto-autorisee. Mode 'default' => 'ask'.
+        verifier(not re.match(r"Bash\((?:cat|head|tail|less|more|xxd|strings)[:\s]", regle),
+                 f"settings.json : lecteur de fichiers en allow : {regle} "
+                 f"(le retirer : en mode 'default' il tombe en confirmation)")
+    # Sandbox : les deux cles ne se dissocient jamais. 'enabled: true' avec
+    # 'failIfUnavailable: false' est le pire etat possible — une protection
+    # silencieusement nulle qu'on croit active (les stances filesystem/network
+    # sont alors decoratives). Tant que bwrap n'est pas installable (S-11),
+    # 'enabled: false' est l'etat assume ici.
+    sandbox = settings.get("sandbox", {})
+    if sandbox.get("enabled") is True:
+        verifier(sandbox.get("failIfUnavailable") is True,
+                 "settings.json : sandbox.enabled=true impose failIfUnavailable=true "
+                 "(sinon la sandbox echoue en silence et les stances sont decoratives)")
 except Exception as e:
     echecs.append(f"settings.json invalide : {e}")
 
