@@ -17,7 +17,7 @@ Il documente indifferemment un workflow FME, un script Python ou un modele QGIS.
    Fournir un fichier .svg au script via --diagram, sinon le marqueur est
    retire proprement (aucun diagramme affiche).
 5. Generer le HTML autoportant (prerequis : `pip install markdown`) :
-     python3 scripts/generer_doc_html.py \
+     python3 ${CLAUDE_PLUGIN_ROOT}/scripts/generer_doc_html.py \
          --source doc-mon-outil.md \
          --output doc-mon-outil.html \
          --diagram schema.svg          # optionnel

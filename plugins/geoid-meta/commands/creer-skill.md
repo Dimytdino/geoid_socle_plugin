@@ -37,11 +37,11 @@ absent, demander à l'utilisateur quel skill il veut créer). Vérifier dans
 Déléguer à `interviewer_skill` :
 ```
 Utilise le sous-agent interviewer_skill pour interviewer [prénom de
-l'expert] sur le skill [nom]. Produis le fichier interview-brut.md
-dans `plugins/geoid/skills/[nom-du-skill]/`.
+l'expert] sur le skill [nom]. Produis le fichier
+`docs/interviews/[nom-du-skill].md`.
 ```
 
-Attendre la fin de l'interview et la production de `interview-brut.md`.
+Attendre la fin de l'interview et la production du compte rendu.
 Relire le fichier : si une des 7 questions n'a pas de réponse exploitable,
 demander à l'`interviewer_skill` de relancer l'expert sur ce point avant
 de passer à l'étape 2.
@@ -51,7 +51,7 @@ de passer à l'étape 2.
 Déléguer à `redacteur_skill` :
 ```
 Utilise le sous-agent redacteur_skill pour rédiger le SKILL.md du skill
-[nom] à partir du fichier plugins/geoid/skills/[nom-du-skill]/interview-brut.md.
+[nom] à partir du fichier docs/interviews/[nom-du-skill].md.
 Produis plugins/geoid/skills/[nom-du-skill]/SKILL.md.
 ```
 
@@ -64,7 +64,7 @@ relancer l'`interviewer_skill` sur ce point spécifique avant de continuer.
 Déléguer à `critique_skill` :
 ```
 Utilise le sous-agent critique_skill pour valider le fichier
-plugins/geoid/skills/[nom-du-skill]/SKILL.md en le comparant à plugins/geoid/skills/[nom-du-skill]/interview-brut.md.
+plugins/geoid/skills/[nom-du-skill]/SKILL.md en le comparant à docs/interviews/[nom-du-skill].md.
 ```
 
 Selon le verdict :
@@ -84,9 +84,12 @@ python3 scripts/packager_skill.py plugins/geoid/skills/[nom-du-skill]/
 ```
 
 Le fichier `.skill` produit est prêt pour installation par l'admin de
-l'organisation Claude. Le dossier `plugins/geoid/skills/[nom-du-skill]/` (SKILL.md et
-interview-brut.md) est commité dans le dépôt du socle : c'est la source
-de vérité, le `.skill` n'en est que l'emballage.
+l'organisation Claude. Le dossier `plugins/geoid/skills/[nom-du-skill]/`
+(SKILL.md, `references/`) est commité dans le dépôt du socle : c'est la
+source de vérité, le `.skill` n'en est que l'emballage. La matière brute de
+l'entretien vit à part, dans `docs/interviews/[nom-du-skill].md` : elle
+alimente les agents de `geoid-meta` et **ne voyage pas** dans le plugin
+installé par les équipes (poids mort, et matière explicitement non revue).
 
 ## Étape 5 — Mise à jour du registre
 

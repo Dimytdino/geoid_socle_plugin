@@ -22,20 +22,22 @@ def _faux_socle(tmp):
 
 
 def test_liste_residuel_reelle():
-    """Sur le vrai socle : CHARTE + le generateur HTML + templates/ + specialisations/.
+    """Sur le vrai socle : CHARTE + templates/ + specialisations/. AUCUN script.
 
-    `scripts/generer_doc_html.py` est le SEUL script du residuel (S-19) : il
-    accompagne la CSS et le gabarit de fiche-outil, deja distribues. Tout autre
-    script reste au socle — un projet n'a ni packageur de skills, ni evals.
+    Arbitrage S-19/S-26 : l'outillage executable d'equipe voyage par le PLUGIN
+    (`${CLAUDE_PLUGIN_ROOT}/scripts/`), pas par le residuel — c'est ce que
+    prevoit l'ADR-001 SS2 pour `generer_doc_html.py`. Le residuel ne porte que
+    ce qu'un plugin ne peut pas fournir : la CHARTE, les gabarits, les
+    specialisations. Un script dans cette liste serait une seconde source de
+    verite pour le meme fichier, versionnee par un autre canal.
     """
     rels = st.fichiers_residuel(RACINE)
     assert "CHARTE.md" in rels
-    assert "scripts/generer_doc_html.py" in rels
     autorises = ("templates/", "specialisations/")
-    assert all(r in ("CHARTE.md", "scripts/generer_doc_html.py") or r.startswith(autorises)
-               for r in rels), rels
+    assert all(r == "CHARTE.md" or r.startswith(autorises) for r in rels), rels
     assert not any(r.startswith(("plugins/", "tests/")) for r in rels)
-    assert [r for r in rels if r.startswith("scripts/")] == ["scripts/generer_doc_html.py"]
+    assert not [r for r in rels if r.startswith("scripts/")], \
+        "un script est revenu dans le residuel (arbitrage S-19/S-26)"
 
 
 def test_check_signale_manquants_puis_apply_repare():

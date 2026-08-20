@@ -265,7 +265,7 @@ except Exception as e:
 
 # --- Surface distribuee : tout ce qui atteint un depot projet ---------------
 # Deux canaux : le residuel recopie par sync_template.py (CHARTE, templates/,
-# specialisations/, generateur HTML) et le plugin geoid installe depuis la
+# specialisations/) et le plugin geoid installe depuis la
 # marketplace. geoid-meta est HORS perimetre : outillage du mainteneur, jamais
 # installe chez les equipes — il peut donc citer tests/ et scripts/ librement.
 try:
@@ -376,6 +376,67 @@ if _m:
     verifier(n <= seuil - 30,
              f"template CLAUDE projet : {n} lignes pour un seuil d'alerte à {seuil} — "
              f"trop peu de marge, un projet rempli déclencherait l'avertissement d'emblée")
+
+# 17. Modele explicite par agent (S-35, audit externe C-01) : sans `model:`,
+#     Claude Code retombe sur `inherit` et un agent a fort volume / faible
+#     exigence de raisonnement (documentaliste) tourne au tarif du
+#     modele de session. La ligne doit etre ECRITE, meme quand elle vaut
+#     `inherit` : c'est ce qui la rend revisable et empeche qu'elle se reperde
+#     au prochain agent cree.
+MODELES_VALIDES = {"inherit", "haiku", "sonnet", "opus", "fable"}
+for dossier in (*DOSSIERS_AGENTS, RACINE / "specialisations"):
+    for f in sorted(dossier.glob("*.md")):
+        m = re.search(r"^model:\s*(\S+)\s*$", f.read_text(encoding="utf-8"), re.M)
+        verifier(m is not None, f"{f.name} : frontmatter sans 'model:' (S-35)")
+        if m:
+            verifier(m.group(1) in MODELES_VALIDES or m.group(1).startswith("claude-"),
+                     f"{f.name} : model '{m.group(1)}' inconnu (attendu : "
+                     f"{'/'.join(sorted(MODELES_VALIDES))} ou un id claude-*)")
+
+# 18. Le seuil anti-delegation-triviale vit dans la COUCHE QUI PRIME (S-32,
+#     audit externe C-02). La CHARTE prime explicitement sur le CLAUDE.md
+#     projet : tant que la regle n'existait qu'au gabarit, elle perdait
+#     l'arbitrage par construction face au « la session principale ne fait pas
+#     le travail specialise » de la CHARTE SS6.
+try:
+    charte = (RACINE / "CHARTE.md").read_text(encoding="utf-8")
+    gabarit = (RACINE / "templates/CLAUDE.projet.template.md").read_text(encoding="utf-8")
+    for nom, txt in (("CHARTE.md", charte), ("CLAUDE.projet.template.md", gabarit)):
+        verifier("déléguer du trivial" in txt.lower(),
+                 f"{nom} : seuil anti-delegation-triviale absent — la regle doit "
+                 f"figurer dans la couche 1 (CHARTE) autant qu'au gabarit (S-32)")
+except Exception as e:
+    echecs.append(f"seuil de delegation : {e}")
+
+# 19. Tout chemin de fichier cite par un SKILL.md est ATTEIGNABLE DEPUIS UN
+#     DEPOT PROJET (S-19, audit externe C-11). Ferme la classe « consigne
+#     inexecutable cote equipe » : fme-tse prescrivait `scripts/
+#     generer_doc_html.py`, qui existe cote socle mais n'a jamais ete livre.
+#     Verifier l'existence dans le socle ne suffit donc PAS — c'est ce qui
+#     rendait le defaut invisible. Un projet ne voit que deux choses :
+#       - le plugin installe, via ${CLAUDE_PLUGIN_ROOT} -> plugins/geoid/ ;
+#       - le residuel merge depuis le template (CHARTE.md, templates/,
+#         specialisations/ — cf. scripts/sync_template.py).
+#     Tout autre prefixe est un chemin du depot socle, invisible cote equipe.
+RESIDUEL_TEMPLATE = ("CHARTE.md", "templates/", "specialisations/")
+MOTIF_CHEMIN = re.compile(r"`([^`\s]*/[^`\s]*\.(?:md|py|css|json|html|yml|fmw))`")
+for f in sorted(DOSSIER_SKILLS.glob("*/SKILL.md")):
+    for cite in sorted(set(MOTIF_CHEMIN.findall(f.read_text(encoding="utf-8")))):
+        if any(c in cite for c in "[<{"):
+            continue  # placeholder documentaire, pas un chemin reel
+        if cite.startswith("${CLAUDE_PLUGIN_ROOT}"):
+            rel = cite.replace("${CLAUDE_PLUGIN_ROOT}", "plugins/geoid").lstrip("/")
+        elif cite.startswith(RESIDUEL_TEMPLATE):
+            rel = cite
+        else:
+            echecs.append(
+                f"{f.parent.name}/SKILL.md : chemin cite '{cite}' hors du perimetre "
+                f"livre — un depot projet ne voit que ${{CLAUDE_PLUGIN_ROOT}}/… et le "
+                f"residuel du template ({', '.join(RESIDUEL_TEMPLATE)})")
+            continue
+        verifier((RACINE / rel).exists(),
+                 f"{f.parent.name}/SKILL.md : chemin cite '{cite}' introuvable "
+                 f"(attendu dans le socle : {rel})")
 
 if echecs:
     print("ECHECS d'integrite :")

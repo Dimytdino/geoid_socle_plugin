@@ -41,6 +41,9 @@ geoid-socle/
 │   │   │   └── mentor.md            pédagogie — explique, ne fait jamais à la place
 │   │   ├── commands/                geoid:cadrer-projet, geoid:cloturer-session
 │   │   ├── skills/                  skills d'organisation, chargés par Claude Code
+│   │   ├── scripts/                 outillage d'équipe livré (${CLAUDE_PLUGIN_ROOT})
+│   │   │   ├── generer_doc_html.py  fiche-outil HTML autoportante (Markdown → HTML)
+│   │   │   └── style-doc-tse.css    charte CSS TSE, inlinée par le script
 │   │   └── hooks/                   garanties exécutables (PreToolUse secrets, SessionStart)
 │   └── geoid-meta/                  PLUGIN mainteneur (skills du socle)
 │       ├── .claude-plugin/plugin.json
@@ -55,11 +58,9 @@ geoid-socle/
 ├── templates/
 │   ├── CLAUDE.projet.template.md    squelette de la couche 2 (court, lu à chaque session)
 │   ├── suivi-projet.template.md     roadmap/risques/revues → docs/suivi-projet.md
-│   ├── fiche-outil.template.md      squelette de doc d'un outil (FME / Python / QGIS)
-│   └── style-doc-tse.css            charte CSS TSE pour les fiches HTML
+│   └── fiche-outil.template.md      squelette de doc d'un outil (FME / Python / QGIS)
 ├── scripts/
 │   ├── packager_skill.py            empaquette un skill en .skill (canal claude.ai)
-│   ├── generer_doc_html.py          génère une fiche-outil HTML autoportante (Markdown → HTML)
 │   ├── verifier_migration_plugin.py détecte les doublons plugin/local d'un projet (migration 0.5.0)
 │   ├── evaluer_declenchement.py     valide les jeux d'évals de déclenchement des skills
 │   └── sync_template.py             synchronise le résiduel socle → geoid_agents_template
@@ -208,9 +209,13 @@ autre dépôt (scope `local`) ou périmée.
 | seule copie en scope `local` d'un autre dépôt | installer au scope `user` ; le cas échéant, se placer dans ce dépôt et `claude plugin uninstall geoid@geoid-socle --scope local` |
 
 Dans tous les cas : **relancer `claude`** pour que le changement prenne
-effet. Repère de contenu attendu en 1.0.0 : `commands/cadrer-projet.md` et
-`cloturer-session.md`, les 7 agents, les 3 skills métier et les hooks
-(`bloquer_secrets.py`, `injecter_contexte.py` — absents des versions 0.5.x).
+effet. Repère de contenu attendu en 1.2.0 : `commands/cadrer-projet.md` et
+`cloturer-session.md`, les 7 agents (tous avec une ligne `model:` explicite —
+absente ≤ 1.1.0), les 3 skills métier, les hooks (`bloquer_secrets.py`,
+`injecter_contexte.py` — absents des versions 0.5.x) et
+`scripts/generer_doc_html.py` **dans le plugin**
+(`plugins/geoid/scripts/`, où il a été déplacé en 1.2.0 ; en 1.1.0 il était
+livré par le résiduel, à la racine `scripts/` du projet).
 
 ### Projet existant, non issu du template
 
@@ -296,7 +301,8 @@ voulu, et c'est ce qui fait progresser.
   (Maj+Tab en session, ou `defaultMode` dans `.claude/settings.local.json`) ;
 - `allow` : lecture seule (ls, cat, grep, find, git diff/log/status,
   ogrinfo) et outillage borné du socle (`pytest`, `python3 tests/…`,
-  `python3 scripts/packager_skill.py`, `python3 scripts/generer_doc_html.py`).
+  `python3 scripts/packager_skill.py`,
+  `python3 plugins/geoid/scripts/generer_doc_html.py`).
   **Volontairement absent : `python` / `python3` arbitraire** — un
   interpréteur généraliste contourne tous les autres garde-fous ; il
   demande donc confirmation à chaque fois ;
@@ -336,12 +342,15 @@ Le mode `bypassPermissions` est réservé aux environnements isolés
   (`.github/workflows/tests.yml`) les rejoue à chaque push/PR, avec la
   dépendance `markdown` installée (`requirements-dev.txt`) pour qu'aucun
   test ne soit ignoré en silence.
-- **Outillage documentation** : `scripts/generer_doc_html.py` produit une
-  fiche-outil HTML autoportante depuis un Markdown (gabarit
-  `templates/fiche-outil.template.md`, charte `templates/style-doc-tse.css`).
-  Seule dépendance tierce du socle : `pip install markdown` (le reste est
-  stdlib). Usage : `python3 scripts/generer_doc_html.py --source FICHE.md
-  --output FICHE.html [--diagram SCHEMA.svg]`.
+- **Outillage documentation** : `plugins/geoid/scripts/generer_doc_html.py`
+  produit une fiche-outil HTML autoportante depuis un Markdown (gabarit
+  `templates/fiche-outil.template.md`, charte `style-doc-tse.css` livrée à
+  côté du script). C'est de l'**outillage d'équipe embarqué dans le plugin**
+  (ADR-001 §2) : côté projet il s'invoque
+  `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/generer_doc_html.py --source FICHE.md
+  --output FICHE.html [--diagram SCHEMA.svg]`, et le skill `fme-tse` s'y
+  réfère sous cette forme. Seule dépendance tierce du socle :
+  `pip install markdown` (le reste est stdlib).
 - **Avant tout push significatif** (nouvel agent, nouvelle commande,
   amendement de la CHARTE, permissions) : lancer `/geoid-meta:revue-socle` — le
   socle passe par sa propre exigence de revue. Un verdict non APPROUVÉ

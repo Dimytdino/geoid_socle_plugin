@@ -49,6 +49,7 @@ claude
   python3 tests/test_verifier_migration_plugin.py
   python3 tests/test_evaluer_declenchement.py
   python3 tests/test_sync_template.py
+  python3 tests/test_hooks.py
   ```
 - Versionnage : **alignement strict** (ADR-001c) — `SOCLE_VERSION` = version
   de la marketplace = version de chaque `plugin.json`. Le bloc de cohérence

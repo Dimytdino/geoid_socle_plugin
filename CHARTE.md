@@ -89,7 +89,12 @@ appartiennent à l'une des quatre familles suivantes :
 
 ## 6. Orchestration
 
-La session principale coordonne ; elle ne fait pas le travail spécialisé.
+La session principale coordonne. Elle traite **directement le trivial** —
+question de compréhension, correctif de quelques lignes, lecture de fichier —
+et délègue dès qu'une tâche est spécialisée, longue ou engageante (code de
+production, analyse, décision de conception, revue). **Déléguer du trivial
+coûte plus qu'il ne rapporte** : l'amorçage d'un sous-agent (CHARTE, CLAUDE.md
+projet, corps de l'agent) dépasse largement le travail demandé.
 Pour une demande non triviale, expliciter d'abord : analyse de la demande
 (1-2 phrases), agents mobilisés et pourquoi, mission précise de chacun.
 Si la demande est ambiguë, contradictoire ou hors périmètre : le dire et

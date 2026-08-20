@@ -20,15 +20,16 @@ import sys, pathlib, shutil, filecmp
 
 RACINE = pathlib.Path(__file__).resolve().parents[1]
 
-# Le sous-ensemble « résiduel » copié à l'identique socle → template.
-# `scripts/generer_doc_html.py` en fait partie (S-19) : le template livrait
-# déjà `templates/style-doc-tse.css` et `templates/fiche-outil.template.md`,
-# mais pas le générateur qui les consomme — un projet recevait la feuille de
-# style sans le moyen de produire le HTML, et les renvois vers
-# `scripts/generer_doc_html.py` (fiche-outil, CSS, skill fme-tse) pointaient
-# dans le vide. Le script résout sa CSS en relatif depuis la racine du dépôt :
-# il fonctionne tel quel une fois posé dans un projet dérivé du template.
-RESIDUEL_FICHIERS = ["CHARTE.md", "scripts/generer_doc_html.py"]
+# Le sous-ensemble « résiduel » copié à l'identique socle → template : ce
+# qu'un plugin ne peut PAS fournir. Aucun script n'y figure (arbitrage
+# S-19/S-26, 2026-08-25). L'outillage exécutable d'équipe voyage par le
+# plugin — `generer_doc_html.py` et sa charte CSS vivent dans
+# `plugins/geoid/scripts/` et s'invoquent via `${CLAUDE_PLUGIN_ROOT}`,
+# comme le prévoit l'ADR-001 §2. Un script présent des deux côtés serait une
+# seconde source de vérité pour le même fichier, versionnée par l'autre canal.
+# Le bloc « aucun script dans le résiduel » de tests/test_sync_template.py
+# tient cette règle.
+RESIDUEL_FICHIERS = ["CHARTE.md"]
 RESIDUEL_DOSSIERS = ["templates", "specialisations"]
 
 
