@@ -83,20 +83,60 @@ def test_entree_illisible_fail_open():
     assert r.returncode == 0
 
 
-def test_injection_version_et_adr():
+GABARIT = RACINE / "templates" / "CLAUDE.projet.template.md"
+
+
+def _session(claude_md):
+    """Lance le hook SessionStart sur un projet dont le CLAUDE.md est `claude_md`."""
     with tempfile.TemporaryDirectory() as plug, tempfile.TemporaryDirectory() as proj:
-        # faux plugin root avec plugin.json versionné
         (pathlib.Path(plug) / ".claude-plugin").mkdir()
         (pathlib.Path(plug) / ".claude-plugin" / "plugin.json").write_text(
             json.dumps({"name": "geoid", "version": "9.9.9"}), encoding="utf-8")
-        # projet avec un point À ARBITRER dans CLAUDE.md
-        (pathlib.Path(proj) / "CLAUDE.md").write_text(
-            "# Projet\n- 🔧 À ARBITRER : choix de la stack (ADR-002)\n", encoding="utf-8")
+        (pathlib.Path(proj) / "CLAUDE.md").write_text(claude_md, encoding="utf-8")
         r = _lancer("injecter_contexte.py", {"hook_event_name": "SessionStart"},
                     env={"CLAUDE_PLUGIN_ROOT": plug}, cwd=proj)
         assert r.returncode == 0, r.stderr
-        assert "9.9.9" in r.stdout
-        assert "À ARBITRER" in r.stdout and "stack" in r.stdout
+        return r.stdout
+
+
+# La fixture est le gabarit RÉELLEMENT LIVRÉ, pas une chaîne construite pour
+# l'occasion : c'est le seul fichier que le hook rencontrera en production.
+# Règle générale du socle : un test de hook prend le gabarit livré comme fixture.
+
+def test_injection_version():
+    assert "9.9.9" in _session(GABARIT.read_text(encoding="utf-8"))
+
+
+def test_gabarit_sans_adr_tranche_nannonce_rien():
+    """Gabarit livré tel quel : aucun ADR ouvert à annoncer.
+
+    Le §0 du gabarit explique le marqueur `🔧 À ARBITRER` en prose et le §9
+    porte une ligne de tableau à placeholders : ni l'un ni l'autre n'est une
+    décision en attente. L'ancien filtre remontait la prose du §0, tronquée.
+    """
+    sortie = _session(GABARIT.read_text(encoding="utf-8"))
+    assert "Points à arbitrer" not in sortie, sortie
+
+
+def test_ligne_de_tableau_a_decider_est_annoncee():
+    """Un ADR réellement ouvert (§9, colonne Statut) est annoncé en entier."""
+    gabarit = GABARIT.read_text(encoding="utf-8")
+    ligne = "| ADR-002 | modèle de données | écriture du schéma, migrations | À décider |"
+    rempli = gabarit.replace(
+        "| ADR-001 | {{...}} | {{ex. écriture du schéma, migrations}} | À décider |", ligne)
+    assert ligne in rempli, "structure du §9 du gabarit modifiée : adapter le test"
+    sortie = _session(rempli)
+    assert "Points à arbitrer" in sortie, sortie
+    assert "ADR-002 — modèle de données" in sortie, sortie
+
+
+def test_statut_tranche_nest_pas_annonce():
+    """Une décision actée (statut hors À décider / À arbitrer / Ouvert) est muette."""
+    gabarit = GABARIT.read_text(encoding="utf-8")
+    rempli = gabarit.replace(
+        "| ADR-001 | {{...}} | {{ex. écriture du schéma, migrations}} | À décider |",
+        "| ADR-002 | modèle de données | — | Actée le 2026-08-20 |")
+    assert "Points à arbitrer" not in _session(rempli)
 
 
 if __name__ == "__main__":

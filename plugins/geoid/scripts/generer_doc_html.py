@@ -1,20 +1,23 @@
 #!/usr/bin/env python3
 """Generer une documentation HTML autoportante a partir d'une fiche Markdown.
 
-Outillage GeoID : convertit une fiche d'outil redigee en Markdown (modele
+Outillage d'equipe GeoID, embarque dans le plugin `geoid` (ADR-001 §2) :
+convertit une fiche d'outil redigee en Markdown (modele
 `templates/fiche-outil.template.md`) en une page HTML unique, autoportante
 (CSS inline), avec navigation laterale (table des matieres auto-generee).
 
 Usage :
-    python3 scripts/generer_doc_html.py --source fiche.md --output fiche.html
-    python3 scripts/generer_doc_html.py --source fiche.md --output fiche.html \\
+    python3 ${CLAUDE_PLUGIN_ROOT}/scripts/generer_doc_html.py \\
+        --source fiche.md --output fiche.html
+    python3 ${CLAUDE_PLUGIN_ROOT}/scripts/generer_doc_html.py \\
+        --source fiche.md --output fiche.html \\
         --diagram schema.svg --title "Mon outil"
 
 Arguments :
     --source   (requis) chemin du fichier Markdown source.
     --output   (requis) chemin du fichier HTML a produire.
-    --css      feuille de style a inliner (defaut : templates/style-doc-tse.css,
-               relatif a la racine du depot).
+    --css      feuille de style a inliner (defaut : la charte TSE
+               `style-doc-tse.css`, livree a cote de ce script).
     --diagram  (optionnel) fichier .svg a injecter a la place du marqueur
                `<!-- WORKFLOW_DIAGRAM -->`. Sans cet argument, le marqueur est
                retire proprement.
@@ -43,9 +46,10 @@ except ImportError:
     )
     sys.exit(1)
 
-# Racine du depot (ce script vit dans scripts/), pour resoudre le CSS par defaut.
-RACINE = pathlib.Path(__file__).resolve().parents[1]
-CSS_DEFAUT = RACINE / "templates" / "style-doc-tse.css"
+# Le script est autoportant : sa charte CSS vit A COTE de lui, dans le plugin
+# `geoid` (ADR-001 §2). Il fonctionne donc identiquement depuis le socle et
+# depuis un depot projet, ou il est invoque via ${CLAUDE_PLUGIN_ROOT}.
+CSS_DEFAUT = pathlib.Path(__file__).resolve().parent / "style-doc-tse.css"
 
 MARQUEUR_DIAGRAMME = "<!-- WORKFLOW_DIAGRAM -->"
 
@@ -83,7 +87,8 @@ def construire_arguments(argv=None):
     p.add_argument("--source", required=True, help="Fichier Markdown source.")
     p.add_argument("--output", required=True, help="Fichier HTML a produire.")
     p.add_argument("--css", default=str(CSS_DEFAUT),
-                   help="Feuille de style a inliner (defaut : templates/style-doc-tse.css).")
+                   help="Feuille de style a inliner (defaut : la charte TSE "
+                        "style-doc-tse.css livree a cote de ce script).")
     p.add_argument("--diagram", default=None,
                    help="Fichier .svg a injecter a la place du marqueur diagramme.")
     p.add_argument("--title", default=None,

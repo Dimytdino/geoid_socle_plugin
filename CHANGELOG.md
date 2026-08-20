@@ -3,6 +3,87 @@
 Format inspiré de Keep a Changelog. La version vit aussi dans `SOCLE_VERSION`.
 Chaque projet note la version du socle utilisée dans son `CLAUDE.md`.
 
+## 1.1.0 — 2026-08
+
+Lot 1 des correctifs de l'**audit externe du 2026-08-20** (S-19, S-25 volet 1,
+S-32, S-33, S-34). Contenu du plugin modifié → bump **mineur** aligné
+(`SOCLE_VERSION`, marketplace, les deux `plugin.json` — ADR-001c) : correctifs
+et ajouts, aucune rupture d'interface.
+
+⚠️ **Étape de release à ne pas oublier** — `templates/style-doc-tse.css` quitte
+le résiduel (il vit désormais dans le plugin). `sync_template.py --check` le
+signalera « en trop » côté `geoid_agents_template` et **ne le supprime jamais
+automatiquement** : le retirer à la main du template, sinon les projets gardent
+une copie morte de la charte CSS.
+
+### Corrigé
+- **Hook `SessionStart` (S-33)** — `adr_ouverts()` remontait toute ligne
+  contenant `🔧` ou « À ARBITRER ». Double défaut : **faux positif
+  systématique** (la prose explicative du §0 du gabarit, tronquée au milieu
+  d'une phrase, annoncée comme point à arbitrer à chaque session de chaque
+  projet — alors que la CHARTE §5 attache à cet état un blocage de production)
+  et **faux négatif** (les vrais ADR ouverts, décrits dans le tableau du §9
+  sans marqueur `🔧`, jamais détectés). Nouveau contrat explicite : les lignes
+  de tableau de la section « Décisions en attente » dont la cellule Statut vaut
+  `À décider` / `À arbitrer` / `Ouvert`, restituées sous la forme
+  `ADR-00X — sujet`. Les lignes à placeholder `{{…}}` sont ignorées.
+- **Test du hook (S-33)** — `tests/test_hooks.py` validait une chaîne
+  synthétique dont le format n'existait dans aucun gabarit : vert alors que le
+  hook était faux sur le seul fichier qu'il rencontre en production. La fixture
+  est désormais **le gabarit réellement livré**. Règle posée : *un test de hook
+  prend le gabarit livré comme fixture*.
+- **Skill `fme-tse` exécutable côté projet (S-19)** — le skill prescrivait
+  `scripts/generer_doc_html.py` et citait `documentation-fme/docs/…`, aucun des
+  deux atteignable depuis un dépôt projet. Application de l'**option retenue
+  par l'ADR-001 §2, jamais mise en œuvre** : `generer_doc_html.py` et sa charte
+  `style-doc-tse.css` vivent maintenant dans `plugins/geoid/scripts/` et sont
+  invoqués `${CLAUDE_PLUGIN_ROOT}/scripts/generer_doc_html.py`. Le script est
+  rendu **autoportant** (son CSS est résolu à côté de lui, non plus par rapport
+  à une racine de dépôt qui n'existe pas chez les équipes). Renvoi au dépôt
+  pilote retiré.
+- **Contradiction entre couches (S-32)** — la règle « déléguer du trivial coûte
+  plus qu'il ne rapporte » n'existait qu'au gabarit projet (couche 2), quand la
+  CHARTE §6 disait « la session principale ne fait pas le travail spécialisé »
+  et que la CHARTE **prime** (`CHARTE.md:6`) : le seul garde-fou
+  anti-délégation-inutile perdait l'arbitrage par construction. Le seuil est
+  porté dans la CHARTE §6.
+
+### Modifié
+- **Modèle explicite par agent (S-25, volet 1)** — les **13** agents portaient
+  zéro `model:` et héritaient donc tous du modèle de session. Désormais écrit :
+  `opus` pour `architecte`, `revieweur` et `mentor` (le mentor est la mitigation
+  du risque de reprise — le dégrader serait l'économie la plus mal placée) ;
+  `haiku` pour `documentaliste`, `chef_projet` et `interviewer_skill` (gros
+  volume, faible exigence de raisonnement) ; `inherit` **écrit explicitement**
+  ailleurs, pour que la valeur soit révisable et non subie.
+  ⚠️ À surveiller à l'usage : `documentaliste` (métadonnées ISO 19115) et
+  `chef_projet` — un agent dégradé qui rate une règle CHARTE coûte plus que le
+  modèle économisé. Volet `allowed-tools:` sur les 4 commandes **non traité**.
+- **Amorçage des délégations allégé (S-34)** — les 10 fichiers d'agents et de
+  spécialisations ordonnaient tous la relecture intégrale de la CHARTE
+  (~1 520 tokens) pour 3 à 5 règles réellement applicables au rôle. Ces règles
+  sont désormais **inlinées** dans chaque corps d'agent (déjà chargé : coût
+  marginal nul), suivies de « consulte `CHARTE.md` si un point transverse sort
+  de cette liste ». **Exception assumée : le `revieweur`** garde la lecture
+  intégrale, il vérifie la conformité et a besoin du texte entier.
+- **Matière brute d'entretien sortie du plugin des équipes** — l'unique
+  `interview-brut.md` (~2 460 tokens, consommé par les seuls agents de
+  `geoid-meta`) voyageait dans `plugins/geoid/skills/` : poids mort atteignable
+  par tout agent d'un projet, et matière explicitement non revue citable comme
+  source. Déplacé en `docs/interviews/environnement-arcgis-tse.md` ; les
+  commandes et agents `geoid-meta` pointent le nouvel emplacement.
+
+### Ajouté
+- **Trois blocs au test d'intégrité** (le socle en comptait 12, non 11) :
+  **13** — tout agent des deux plugins et des spécialisations porte un
+  `model:` valide (verrouille S-25) ; **14** — le seuil anti-délégation-triviale
+  figure dans la CHARTE autant qu'au gabarit (verrouille S-32) ; **15** — tout
+  chemin de fichier cité par un `SKILL.md` est atteignable **depuis un dépôt
+  projet**, c'est-à-dire sous `${CLAUDE_PLUGIN_ROOT}/` ou dans le résiduel du
+  template — vérifier son existence dans le socle ne suffit pas, et c'est
+  exactement ce qui rendait S-19 invisible (verrouille S-19).
+  Les trois ont été vérifiés **rouges sur l'état d'avant**.
+
 ## 1.0.0 — 2026-07
 **Première version officiellement supportée du socle** (décision du
 2026-07-30). Passage en `1.0.0` de la version qui allait être publiée

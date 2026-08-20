@@ -6,6 +6,7 @@ description: >
   Vérifie la conformité à la CHARTE et aux grilles du projet. Ne corrige
   pas lui-même ; produit un rapport avec verdict.
 tools: Read, Grep, Glob, Bash
+model: opus
 ---
 
 # Revieweur — socle GéoID

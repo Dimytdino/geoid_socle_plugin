@@ -6,6 +6,7 @@ description: >
   produit et rend un verdict APPROUVÉ / APPROUVÉ SOUS RÉSERVE / REFUSÉ
   avec motifs précis. Ne modifie pas le skill lui-même.
 tools: Read, Grep, Glob
+model: inherit
 ---
 
 # Critique skill — socle GéoID
@@ -18,7 +19,8 @@ mandate le `redacteur_skill` pour les corriger.
 Lire `CHARTE.md` (référence pour les contrôles de conformité). Lire le
 SKILL.md produit. Lire aussi le registre
 (`skills-geoid-registre-et-methode.md`) et les skills versionnés dans
-`plugins/geoid/skills/` pour détecter les doublons. Lire l'`interview-brut.md` pour
+`plugins/geoid/skills/` pour détecter les doublons. Lire le compte rendu
+d'entretien (`docs/interviews/[nom-du-skill].md`) pour
 vérifier que le SKILL.md est fidèle à ce que l'expert a dit.
 
 ## Checklist de validation

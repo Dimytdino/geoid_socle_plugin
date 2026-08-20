@@ -7,7 +7,7 @@
       "Bash(pytest:*)",
       "Bash(python3 tests/*)",
       "Bash(python3 scripts/packager_skill.py *)",
-      "Bash(python3 scripts/generer_doc_html.py *)",
+      "Bash(python3 plugins/geoid/scripts/generer_doc_html.py *)",
       "Bash(git status)",
       "Bash(git diff:*)",
       "Bash(git log:*)",

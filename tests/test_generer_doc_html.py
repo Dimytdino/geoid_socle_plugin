@@ -1,4 +1,4 @@
-"""Tests du generateur de doc HTML (scripts/generer_doc_html.py).
+"""Tests du generateur de doc HTML (plugins/geoid/scripts/generer_doc_html.py).
 
 Stdlib uniquement, sans framework. Si la dependance tierce « markdown » est
 absente, le test AFFICHE « SKIP » et sort en code 0 (portabilite : ne pas
@@ -14,8 +14,11 @@ import sys
 import tempfile
 
 RACINE = pathlib.Path(__file__).resolve().parents[1]
-SCRIPT = RACINE / "scripts" / "generer_doc_html.py"
-CSS = RACINE / "templates" / "style-doc-tse.css"
+# Le script et sa charte CSS sont embarques dans le plugin `geoid` (ADR-001 §2,
+# S-19) : c'est ce qui les rend atteignables depuis un depot projet.
+PLUGIN_SCRIPTS = RACINE / "plugins" / "geoid" / "scripts"
+SCRIPT = PLUGIN_SCRIPTS / "generer_doc_html.py"
+CSS = PLUGIN_SCRIPTS / "style-doc-tse.css"
 
 # Fixture Markdown : un H1, deux sections, une TdM manuelle a ancres
 # desaccentuees (pour verifier que les ancres resolvent), et le marqueur

@@ -59,11 +59,12 @@ Conventions de rédaction :
 - **Exemples anonymisés** : identifiants de projet/poste neutralisés
   (`<identifiant_projet>`), aucune donnée foncière (cf. CHARTE et
   `conventions-sig-tse`).
-- **Génération HTML** : produire le `.html` autoportant via
-  `scripts/generer_doc_html.py` (bibliothèque Python `markdown`, CSS
-  inliné). Ne pas utiliser pandoc ni de framework front.
-- **Référence** : `documentation-fme/docs/workflow-covisibilite.md` est la
-  fiche pilote validée dont est issue cette structure.
+- **Génération HTML** : produire le `.html` autoportant avec le script livré
+  par le plugin — `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/generer_doc_html.py
+  --source FICHE.md --output FICHE.html` (dépendance : `pip install markdown` ;
+  la charte visuelle TSE voyage avec le script et n'est pas à fournir). Ne pas
+  utiliser pandoc ni de framework front. Sans le plugin, la règle reste : un
+  seul fichier `.html`, CSS inliné, aucune dépendance externe.
 
 ## Conventions à compléter
 
@@ -91,7 +92,7 @@ d'ensemble, prérequis, paramètres entrée/sortie + dictionnaire des
 champs), conserver les variantes FME (transformers clés, transformers
 désactivés, code Python + dépendances avec versions, déploiement Flow),
 expliciter partis pris / limites / questions ouvertes, puis générer le
-HTML via `scripts/generer_doc_html.py`.
+HTML via `${CLAUDE_PLUGIN_ROOT}/scripts/generer_doc_html.py`.
 
 Demande : « j'hérite d'un workflow FME, par où commencer pour le
 reprendre ? »
