@@ -34,6 +34,14 @@ rapport au lieu de le faire.
       syntaxe d'une version non disponible.
 - [ ] Sources et dates des données renseignées ; géométries valides.
 - [ ] Limites et hypothèses explicitées (pour les analyses et documents).
+- [ ] **Recettabilité** : si le livrable contribue à un incrément métier
+      (§2 du CLAUDE.md, tableau des incréments du suivi), il est
+      utilisable **tel quel** par son destinataire — le critère de recette
+      est vérifiable sur ce qui est livré, sans brique manquante ni étape
+      manuelle non documentée. Sinon, dis ce qui manque pour qu'il le
+      soit. Un travail purement interne (refactor, socle technique,
+      outillage) n'est pas concerné : note-le comme tel plutôt que de
+      l'écarter en silence.
 
 ## Grilles projet
 Le `CLAUDE.md` du projet ajoute des grilles spécifiques par type de

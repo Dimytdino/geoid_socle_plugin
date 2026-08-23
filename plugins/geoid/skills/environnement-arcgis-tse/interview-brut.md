@@ -149,7 +149,7 @@ connexion, URL d'infrastructure interne ni donnée nominative en dur.
   URL/layer id en dur → tout en `config.ts` (IMConfig) ; dépendances épinglées
   (jszip, file-saver).
 
-Faits d'environnement confirmés par le dépôt `nemelios_ags` (ADR-001) :
+Faits d'environnement confirmés par le dépôt `nemelios_ags` :
 ArcGIS Enterprise 11.3, ExB Dev Edition 1.17, stockage EPSG:2154 ; ArcGIS Server
 11.3 embarque arcgispro-py3 en Python 3.11.
 

@@ -25,6 +25,20 @@ réponses pour validation. Sujets à couvrir :
    parties prenantes.
 2. **Objectif** : problème à résoudre, résultat attendu, critères de
    réussite mesurables, échéance éventuelle.
+2 bis. **Premier incrément recettable** — question obligatoire, ne pas la
+   sauter même si l'objectif semble clair :
+   - « Quel est le **plus petit résultat que le métier pourrait déjà
+     utiliser**, et sous quel délai ? » — formulé du point de vue de
+     l'utilisateur (« le chargé d'études peut… »), pas en tâche technique.
+   - « **Qui** l'essaiera, et **qu'observera-t-il** pour dire que c'est
+     bon ? » → c'est le critère de recette, écrit en observable.
+   Si la réponse ressemble à une étape technique (« mettre en place la
+   base », « migrer le front »), c'est un moyen, pas un incrément :
+   reformule avec l'utilisateur jusqu'à obtenir un résultat utilisable de
+   bout en bout, quitte à réduire fortement le périmètre (une commune
+   plutôt qu'un département, le cas nominal plutôt que tous les cas). Si
+   le premier incrément ne tient pas dans quelques semaines, redécoupe-le.
+   Note aussi les 2-3 incréments suivants pressentis, sans les détailler.
 3. **Données** : sources mobilisées (avec millésimes si connus), données
    produites, sensibilité (foncier ? → rappeler CHARTE §4), volumétries.
 4. **Livrables** : liste, format, destinataires.
@@ -87,7 +101,7 @@ Puis applique :
 cours : les agents locaux sont chargés au démarrage de Claude Code. C'est
 prévu par l'étape 4 (relance).
 
-## Étape 2 bis — Serveurs MCP du projet (`.mcp.json`) — ADR-001d
+## Étape 2 bis — Serveurs MCP du projet (`.mcp.json`)
 Selon la famille, **propose** (l'utilisateur valide) la configuration de
 serveurs MCP dans le `.mcp.json` **du projet** — jamais dans le plugin :
 les chaînes de connexion sont propres au projet. C'est le point le plus
@@ -128,9 +142,10 @@ de Claude Code (étape 4).
 Remplace le `CLAUDE.md` du dépôt par
 `templates/CLAUDE.projet.template.md` rempli avec les réponses de
 l'entretien, et crée `docs/suivi-projet.md` depuis
-`templates/suivi-projet.template.md` (roadmap initiale = premières
-tâches identifiées pendant l'entretien). Règles :
-- renseigne la ligne de version en en-tête (ADR-001c) : version du plugin
+`templates/suivi-projet.template.md` (tableau des incréments = celui du
+point 2 bis de l'entretien ; roadmap initiale = premières tâches identifiées pendant
+l'entretien, chacune rattachée à un incrément). Règles :
+- renseigne la ligne de version en en-tête : version du plugin
   `geoid` installée (indiquée par `/plugin`, ou injectée au démarrage de
   session par le hook `geoid` — ne PAS chercher un `SOCLE_VERSION`, absent
   d'un dépôt projet) et version du template résiduel mergée (dernier merge du
@@ -142,15 +157,21 @@ tâches identifiées pendant l'entretien). Règles :
 - chaque décision déjà actée va directement au journal des décisions ;
 - chaque point ouvert apparaît en `🔧 À ARBITRER` avec son ADR-00X **et
   la liste des tâches qu'il bloque** (le reste avance) ;
-- le suivi (roadmap, risques, revues) va dans `docs/suivi-projet.md`,
-  jamais dans le CLAUDE.md ;
+- renseigne le bloc **« Incrément en cours »** du §2 (deux lignes :
+  l'incrément et son critère de recette) à partir du point 2 bis ; le
+  tableau complet des incréments reste dans `docs/suivi-projet.md` ;
+- le suivi (incréments, backlog, risques, revues) va dans
+  `docs/suivi-projet.md`, jamais dans le CLAUDE.md ;
 - reste factuel et concis : le CLAUDE.md est lu à chaque session, chaque
-  ligne doit mériter sa place.
+  ligne doit mériter sa place. Vise **moins de 180 lignes** ; pas de
+  glossaire, pas d'état d'avancement, pas de tutoriel, pas de recopie de
+  la CHARTE ni d'un skill — tout cela va dans `docs/`.
 
 ## Étape 4 — Restitution et relance
 Termine par un compte rendu : équipe d'agents activée, décisions actées,
 ADR en attente (et recommandation de les faire instruire par
-l'`architecte` en premier), prochaine étape conseillée.
+l'`architecte` en premier), **premier incrément recettable retenu avec
+son critère de recette et son échéance**, prochaine étape conseillée.
 
 Demande ensuite explicitement à l'utilisateur de **quitter et relancer
 Claude Code** : le nouveau `CLAUDE.md` et l'équipe d'agents ajustée ne

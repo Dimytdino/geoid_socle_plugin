@@ -17,7 +17,7 @@ Dimitry.
   en Python 3.11.
 - **ArcGIS Experience Builder Developer Edition : 1.17.**
 - **Stockage : EPSG:2154** (Lambert-93, cf. `conventions-sig-tse`).
-- Source de ces faits : dépôt `nemelios_ags` (ADR-001).
+- Source de ces faits : dépôt `nemelios_ags`.
 
 > Le nombre exact d'applications métier et la liste des intervenants
 > ArcGIS sont **à confirmer avec Fateh** (non chiffrés à ce jour).

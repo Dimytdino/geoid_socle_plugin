@@ -22,11 +22,20 @@ def _faux_socle(tmp):
 
 
 def test_liste_residuel_reelle():
-    """Sur le vrai socle : CHARTE + templates/ + specialisations/, rien d'autre."""
+    """Sur le vrai socle : CHARTE + le generateur HTML + templates/ + specialisations/.
+
+    `scripts/generer_doc_html.py` est le SEUL script du residuel (S-19) : il
+    accompagne la CSS et le gabarit de fiche-outil, deja distribues. Tout autre
+    script reste au socle — un projet n'a ni packageur de skills, ni evals.
+    """
     rels = st.fichiers_residuel(RACINE)
     assert "CHARTE.md" in rels
-    assert all(r == "CHARTE.md" or r.startswith(("templates/", "specialisations/")) for r in rels), rels
-    assert not any(r.startswith(("plugins/", "tests/", "scripts/")) for r in rels)
+    assert "scripts/generer_doc_html.py" in rels
+    autorises = ("templates/", "specialisations/")
+    assert all(r in ("CHARTE.md", "scripts/generer_doc_html.py") or r.startswith(autorises)
+               for r in rels), rels
+    assert not any(r.startswith(("plugins/", "tests/")) for r in rels)
+    assert [r for r in rels if r.startswith("scripts/")] == ["scripts/generer_doc_html.py"]
 
 
 def test_check_signale_manquants_puis_apply_repare():

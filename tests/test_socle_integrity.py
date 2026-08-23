@@ -263,6 +263,120 @@ try:
 except Exception as e:
     echecs.append(f"coherence registre <-> evals : {e}")
 
+# --- Surface distribuee : tout ce qui atteint un depot projet ---------------
+# Deux canaux : le residuel recopie par sync_template.py (CHARTE, templates/,
+# specialisations/, generateur HTML) et le plugin geoid installe depuis la
+# marketplace. geoid-meta est HORS perimetre : outillage du mainteneur, jamais
+# installe chez les equipes — il peut donc citer tests/ et scripts/ librement.
+try:
+    sys.path.insert(0, str(RACINE / "scripts"))
+    import sync_template as _st
+    DISTRIBUES = set(_st.fichiers_residuel(RACINE))
+    for _p in (RACINE / "plugins/geoid").rglob("*"):
+        if _p.is_file():
+            DISTRIBUES.add(_p.relative_to(RACINE).as_posix())
+except Exception as e:
+    DISTRIBUES = set()
+    echecs.append(f"surface distribuee illisible : {e}")
+
+# 13. Portabilite des chemins (S-19, item « Portabilite » de /revue-socle) :
+#     un fichier distribue ne doit citer aucun chemin qui n'existe QUE dans le
+#     socle. Un projet n'a ni tests/, ni evals/, ni plugins/ : la consigne y
+#     serait inexecutable. La regle se resout contre l'arbre reel plutot que
+#     contre une liste de prefixes — elle reste juste quand le socle bouge.
+EXT_SCANNEES = {".md", ".css", ".json", ".py", ".txt", ".yml"}
+# Chemins qui existent des deux cotes : dans un texte distribue ils designent
+# l'artefact DU PROJET, pas son homonyme du socle.
+CONVENTION_PROJET = {"CLAUDE.md", "CHARTE.md", "docs/suivi-projet.md", ".mcp.json",
+                     ".claude/settings.json", ".gitignore"}
+RX_CHEMIN = re.compile(r"(?<![\w/.\-])((?:[\w.\-]+/)+[\w.*\-]+\.[\w*]+)")
+for rel in sorted(DISTRIBUES):
+    chemin = RACINE / rel
+    if chemin.suffix.lower() not in EXT_SCANNEES:
+        continue
+    for num, ligne in enumerate(chemin.read_text(encoding="utf-8", errors="ignore").splitlines(), 1):
+        for m in RX_CHEMIN.finditer(ligne):
+            cible = m.group(1).rstrip(".")
+            if cible in CONVENTION_PROJET or cible in DISTRIBUES:
+                continue
+            verifier(not (RACINE / cible).exists(),
+                     f"{rel}:{num} : renvoi non portable vers '{cible}' — chemin propre au "
+                     f"socle, absent d'un depot projet (le distribuer, ou reformuler)")
+
+# 14. Renvois ADR (arbitrage du 2026-08-03, option 3) : un contenu distribue
+#     ne cite JAMAIS un ADR du socle. Les deux series partagent la meme
+#     numerotation (ADR-001 du socle vs ADR-001 d'un projet), donc aucune
+#     heuristique ne les distingue de facon fiable ; et un ADR du socle est de
+#     toute facon irresolvable depuis un projet (ADR-001d n'est meme pas un
+#     fichier, c'est une section). On cite la regle, pas sa source.
+#     Seules exceptions : les gabarits qui parlent des ADR DU PROJET.
+RX_ADR = re.compile(r"\bADR-\d")
+for rel in sorted(DISTRIBUES):
+    chemin = RACINE / rel
+    if chemin.suffix.lower() != ".md":
+        continue
+    for num, ligne in enumerate(chemin.read_text(encoding="utf-8", errors="ignore").splitlines(), 1):
+        if not RX_ADR.search(ligne):
+            continue
+        if "ADR-00X" in ligne or "{{" in ligne:   # gabarit d'ADR du projet
+            continue
+        verifier(False,
+                 f"{rel}:{num} : renvoi vers un ADR du socle — irresolvable depuis un "
+                 f"projet et en collision avec la numerotation du projet. Citer la regle "
+                 f"applicable (ex. « CHARTE §4 »), pas l'ADR qui l'a decidee")
+
+# 15. Discipline d'increment metier (S-24). Le socle a longtemps decrit le
+#     pilotage en tâches et jalons : un projet pouvait enchainer des sprints
+#     100 % techniques sans jamais rien livrer de recettable par le metier.
+#     La discipline tient a quatre endroits qui doivent rester alignes — si
+#     l'un d'eux perd la notion, la chaine se rompt en silence.
+_suivi_tpl = (RACINE / "templates/suivi-projet.template.md").read_text(encoding="utf-8")
+_chef = (RACINE / "plugins/geoid/agents/chef_projet.md").read_text(encoding="utf-8")
+_revue = (RACINE / "plugins/geoid/agents/revieweur.md").read_text(encoding="utf-8")
+_cadrage = (RACINE / "plugins/geoid/commands/cadrer-projet.md").read_text(encoding="utf-8")
+_cloture = (RACINE / "plugins/geoid/commands/cloturer-session.md").read_text(encoding="utf-8")
+
+verifier("Incrément en cours" in tpl,
+         "template CLAUDE projet : bloc « Incrément en cours » absent — "
+         "sans cap de session, l'orchestrateur repart en pilotage par tâches")
+verifier("Critère de recette" in tpl,
+         "template CLAUDE projet : « Critère de recette » absent du bloc incrément")
+verifier("| ID | Incrément" not in tpl,
+         "template CLAUDE projet : tableau des incréments — il vit dans "
+         "suivi-projet, pas dans le contexte permanent (seul l'incrément en cours)")
+verifier("| ID | Incrément" in _suivi_tpl,
+         "template suivi-projet : tableau des incréments absent")
+verifier("Critère de recette" in _suivi_tpl and "Recettes prononcées" in _suivi_tpl,
+         "template suivi-projet : critère de recette ou table des recettes absents "
+         "(la revue dit « conforme », la recette dit « le métier en veut » — les deux)")
+for _f, _t, _motifs in (("chef_projet", _chef, ("incrément", "recette", "vertical")),
+                        ("revieweur", _revue, ("ecettab",)),
+                        ("cadrer-projet", _cadrage, ("incrément recettable",)),
+                        ("cloturer-session", _cloture, ("incrément", "Dégraissage"))):
+    for _m in _motifs:
+        verifier(_m in _t, f"{_f} : la discipline d'incrément a disparu (motif « {_m} » absent)")
+
+# 16. Coherence du seuil d'hygiene du CLAUDE.md. Le hook avertit, le gabarit et
+#     les deux commandes annoncent un chiffre : trois sources de verite pour un
+#     meme nombre. Elles derivent des qu'on ajuste l'une sans les autres.
+_hook = (RACINE / "plugins/geoid/hooks/injecter_contexte.py").read_text(encoding="utf-8")
+_m = re.search(r"^SEUIL_LIGNES\s*=\s*(\d+)", _hook, re.M)
+verifier(_m, "injecter_contexte.py : SEUIL_LIGNES introuvable")
+if _m:
+    seuil = int(_m.group(1))
+    for _nom, _texte in (("template CLAUDE projet", tpl),
+                         ("cadrer-projet", _cadrage),
+                         ("cloturer-session", _cloture)):
+        verifier(re.search(rf"{seuil}\s+lignes", _texte),
+                 f"{_nom} : ne cite pas le seuil d'hygiène du hook ({seuil} lignes)")
+    # Le gabarit vierge doit passer sous le seuil avec de la marge : rempli, il
+    # grossit. Un gabarit qui declenche l'avertissement des la premiere session
+    # transformerait le garde-fou en bruit de fond.
+    n = len(tpl.splitlines())
+    verifier(n <= seuil - 30,
+             f"template CLAUDE projet : {n} lignes pour un seuil d'alerte à {seuil} — "
+             f"trop peu de marge, un projet rempli déclencherait l'avertissement d'emblée")
+
 if echecs:
     print("ECHECS d'integrite :")
     for e in echecs:
