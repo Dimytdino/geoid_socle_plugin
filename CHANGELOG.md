@@ -54,14 +54,23 @@ Alignement strict des versions maintenu (ADR-001c).
   *une ligne reste ici si elle change une décision dans n'importe quelle
   session* ; sinon elle part dans `docs/`, lu à la demande.
 
-### Publication (à faire — mainteneur)
-- Commit / PR (la branche `main` est protégée depuis le 2026-08-03).
-- **Re-synchroniser le template** : `python3 scripts/sync_template.py --apply
-  <clone>` — `templates/` a changé, le clone est en dérive.
-- Pousser le tag `1.1.0` + release. Les postes déjà équipés doivent faire
-  `claude plugin update geoid@geoid-socle` puis relancer `claude` : l'étape
-  de dégraissage et la discipline d'incrément ne s'appliquent qu'une fois le
-  plugin réinstallé.
+### Publication
+**Faite le 2026-08-23.** PR #23 fusionnée sur `main` (protégée depuis le
+2026-08-03), CI verte ; tag `1.1.0` poussé et **release pleine** GitHub
+(`latest`). Template **resynchronisé** — `geoid_agents_template` PR #2 :
+gabarits `templates/` à jour et `scripts/generer_doc_html.py` entré au
+résiduel, donc les nouveaux projets partent directement en 1.1.0.
+
+Reste — **côté postes, pas côté socle** : les postes déjà équipés doivent
+faire `claude plugin update geoid@geoid-socle` puis relancer `claude`.
+L'étape de dégraissage et la discipline d'incrément ne s'appliquent qu'une
+fois le plugin réinstallé (vérification : `claude plugin list`).
+
+Au passage, hors périmètre de cette version : les deux décisions du
+2026-08-03 annoncées « socle **et** template » n'avaient été appliquées
+qu'au socle — corrigé (`geoid_agents_template` PR #3 : `Bash(cat:*)` retiré
+de l'`allow`, bloc `sandbox` inerte supprimé), et le tag `stable`, orphelin
+et 42 commits en arrière, a été supprimé. Voir S-27 et S-28 au suivi.
 
 ## 1.0.0 — 2026-07
 **Première version officiellement supportée du socle** (décision du
