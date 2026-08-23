@@ -99,6 +99,48 @@ def test_injection_version_et_adr():
         assert "À ARBITRER" in r.stdout and "stack" in r.stdout
 
 
+def _injecter_avec_claude_md(contenu):
+    with tempfile.TemporaryDirectory() as proj:
+        (pathlib.Path(proj) / "CLAUDE.md").write_text(contenu, encoding="utf-8")
+        r = _lancer("injecter_contexte.py", {"hook_event_name": "SessionStart"}, cwd=proj)
+        assert r.returncode == 0, r.stderr
+        return r.stdout
+
+
+def test_hygiene_signale_fichier_trop_long():
+    # Rien dans le cycle de vie d'un projet n'allège le CLAUDE.md : l'avertissement
+    # de démarrage est la seule force de rappel. Il doit se déclencher sur la
+    # taille SEULE, sans section suspecte.
+    sortie = _injecter_avec_claude_md("# Projet\n" + "ligne anodine\n" * 300)
+    assert "Hygiène du CLAUDE.md" in sortie
+    assert "301 lignes" in sortie
+    assert "cloturer-session" in sortie
+
+
+def test_hygiene_signale_sections_hors_contexte():
+    sortie = _injecter_avec_claude_md(
+        "# Projet\n## 8. Glossaire interne (à enrichir)\n- POC : ...\n"
+        "## 9. État d'avancement\n- [x] fait\n")
+    assert "glossaire" in sortie and "état d'avancement" in sortie
+    # Court : la taille ne doit pas être invoquée ici.
+    assert "lignes (>" not in sortie
+
+
+def test_hygiene_muette_sur_un_claude_md_sain():
+    # Le gabarit vierge lui-même ne doit JAMAIS déclencher l'avertissement,
+    # sinon il devient du bruit dès la première session d'un projet cadré.
+    gabarit = (RACINE / "templates" / "CLAUDE.projet.template.md").read_text(encoding="utf-8")
+    assert "Hygiène du CLAUDE.md" not in _injecter_avec_claude_md(gabarit)
+    assert "Hygiène du CLAUDE.md" not in _injecter_avec_claude_md("# Projet\ncourt.\n")
+
+
+def test_hygiene_absente_sans_claude_md():
+    with tempfile.TemporaryDirectory() as proj:
+        r = _lancer("injecter_contexte.py", {"hook_event_name": "SessionStart"}, cwd=proj)
+        assert r.returncode == 0
+        assert "Hygiène" not in r.stdout
+
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for fn in fns:

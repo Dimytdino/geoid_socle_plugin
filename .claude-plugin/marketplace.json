@@ -10,13 +10,13 @@
       "name": "geoid",
       "source": "./plugins/geoid",
       "description": "Agents, skills et commandes du pôle GéoID pour les projets SIG : cadrage de projet, analyse, développement, revue et documentation.",
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     {
       "name": "geoid-meta",
       "source": "./plugins/geoid-meta",
       "description": "Outillage du mainteneur du socle GéoID : création et revue de skills (agents skill-builder et commandes dédiées).",
-      "version": "1.0.0"
+      "version": "1.1.0"
     }
   ]
 }

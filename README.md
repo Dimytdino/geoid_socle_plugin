@@ -118,7 +118,7 @@ commandes, hooks) passe par la marketplace ; ce qu'il **ne peut pas** fournir
 3. **Installer le plugin une fois par poste**, au scope `user` :
    ```bash
    claude plugin install geoid@geoid-socle --scope user   # --scope user est le défaut
-   claude plugin list                                     # doit afficher geoid 1.0.0, scope user
+   claude plugin list                                     # doit afficher geoid 1.1.0, scope user
    ```
    ⚠️ Ne pas compter sur la seule déclaration du template : `enabledPlugins`
    **active** le plugin, il ne garantit pas qu'une copie installée soit

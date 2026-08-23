@@ -21,7 +21,14 @@ import sys, pathlib, shutil, filecmp
 RACINE = pathlib.Path(__file__).resolve().parents[1]
 
 # Le sous-ensemble « résiduel » copié à l'identique socle → template.
-RESIDUEL_FICHIERS = ["CHARTE.md"]
+# `scripts/generer_doc_html.py` en fait partie (S-19) : le template livrait
+# déjà `templates/style-doc-tse.css` et `templates/fiche-outil.template.md`,
+# mais pas le générateur qui les consomme — un projet recevait la feuille de
+# style sans le moyen de produire le HTML, et les renvois vers
+# `scripts/generer_doc_html.py` (fiche-outil, CSS, skill fme-tse) pointaient
+# dans le vide. Le script résout sa CSS en relatif depuis la racine du dépôt :
+# il fonctionne tel quel une fois posé dans un projet dérivé du template.
+RESIDUEL_FICHIERS = ["CHARTE.md", "scripts/generer_doc_html.py"]
 RESIDUEL_DOSSIERS = ["templates", "specialisations"]
 
 

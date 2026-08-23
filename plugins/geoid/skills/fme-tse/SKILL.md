@@ -62,8 +62,9 @@ Conventions de rédaction :
 - **Génération HTML** : produire le `.html` autoportant via
   `scripts/generer_doc_html.py` (bibliothèque Python `markdown`, CSS
   inliné). Ne pas utiliser pandoc ni de framework front.
-- **Référence** : `documentation-fme/docs/workflow-covisibilite.md` est la
-  fiche pilote validée dont est issue cette structure.
+- **Référence** : cette structure est issue d'une fiche pilote validée par
+  le pôle (workflow de covisibilité). Demander au mainteneur du socle si
+  besoin de l'exemplaire de référence.
 
 ## Conventions à compléter
 

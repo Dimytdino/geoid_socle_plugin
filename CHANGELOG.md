@@ -3,6 +3,66 @@
 Format inspiré de Keep a Changelog. La version vit aussi dans `SOCLE_VERSION`.
 Chaque projet note la version du socle utilisée dans son `CLAUDE.md`.
 
+## 1.1.0 — 2026-08
+**Pilotage par incréments métier recettables, et hygiène du contexte projet**
+(S-24). Deux dérives constatées sur un projet réel (`orion_agents`) : un
+pilotage décrit en tâches et jalons, qui laissait passer des sprints 100 %
+techniques non démontrables par le métier ; et un `CLAUDE.md` en croissance
+monotone (184 lignes) parce que rien, dans le cycle de vie d'un projet, n'en
+retirait jamais de contenu. Version mineure : contenu du plugin `geoid` et
+gabarits modifiés, aucune rupture d'interface (noms gelés, ADR-001 §7).
+Alignement strict des versions maintenu (ADR-001c).
+
+### Ajouté
+- **Discipline d'incrément dans le gabarit projet** : bloc « Incrément en
+  cours » (§2, deux lignes : l'incrément et son critère de recette) et **cap
+  de travail** au §0 — rattacher ce qu'on fait à l'incrément en cours, une
+  obligation qui incombe à l'orchestrateur quand le `chef_projet` n'est pas
+  activé au §5 (il est optionnel en familles étude et pipeline).
+- **`templates/suivi-projet.template.md`** : tableau des incréments en tête
+  (valeur métier, critère de recette observable, démo, statut jusqu'à
+  `Recetté`), backlog rattaché à un incrément, et une table **« Recettes
+  prononcées »** distincte du suivi des revues — la revue dit « conforme »,
+  la recette dit « le métier en veut ».
+- **Question obligatoire au cadrage** (`geoid:cadrer-projet`, point 2 bis) :
+  premier incrément recettable — quoi, pour qui, sous quel délai, et
+  qu'observera-t-on pour dire que c'est bon ; avec la consigne de reformuler
+  quand la réponse est un moyen technique.
+- **Critère de recettabilité** dans la grille socle du `revieweur`.
+- **Étape 2 bis de dégraissage** dans `geoid:cloturer-session` : la seule
+  passe du cycle où du contenu peut *sortir* du CLAUDE.md, vers `docs/`, et
+  jamais sans l'accord de l'utilisateur.
+- **Avertissement d'hygiène au démarrage** (`hooks/injecter_contexte.py`,
+  non bloquant) : CLAUDE.md au-delà de **180 lignes**, ou porteur de sections
+  qui n'ont pas à occuper le contexte permanent (glossaire, état
+  d'avancement, roadmap, historique, comptes rendus, risques, revues).
+- **Tests** : 4 cas d'hygiène dans `tests/test_hooks.py` ; blocs 15
+  (la discipline d'incrément présente aux six endroits du socle) et 16
+  (seuil identique entre hook, gabarit et les deux commandes, et marge du
+  gabarit vierge) dans `tests/test_socle_integrity.py`.
+
+### Modifié
+- **Agent `chef_projet` réécrit** autour de l'incrément, désormais sa
+  responsabilité première : découpage **vertical** (un résultat utilisable de
+  bout en bout plutôt qu'une couche terminée), critère de recette obligatoire
+  — pas de critère écrit, pas d'incrément —, leviers de redécoupage quand
+  c'est trop gros, transposition aux familles sans interface (étude,
+  pipeline), et KPI de **valeur livrée** avant KPI d'activité. Garde-fou
+  explicite sur le cycle 100 % technique : possible, signalé, jamais l'état
+  par défaut ; la dette se finance à l'intérieur d'un incrément porteur.
+- **Bloc d'hygiène en tête du gabarit CLAUDE** avec son critère de tri :
+  *une ligne reste ici si elle change une décision dans n'importe quelle
+  session* ; sinon elle part dans `docs/`, lu à la demande.
+
+### Publication (à faire — mainteneur)
+- Commit / PR (la branche `main` est protégée depuis le 2026-08-03).
+- **Re-synchroniser le template** : `python3 scripts/sync_template.py --apply
+  <clone>` — `templates/` a changé, le clone est en dérive.
+- Pousser le tag `1.1.0` + release. Les postes déjà équipés doivent faire
+  `claude plugin update geoid@geoid-socle` puis relancer `claude` : l'étape
+  de dégraissage et la discipline d'incrément ne s'appliquent qu'une fois le
+  plugin réinstallé.
+
 ## 1.0.0 — 2026-07
 **Première version officiellement supportée du socle** (décision du
 2026-07-30). Passage en `1.0.0` de la version qui allait être publiée
