@@ -3,6 +3,34 @@
 Format inspiré de Keep a Changelog. La version vit aussi dans `SOCLE_VERSION`.
 Chaque projet note la version du socle utilisée dans son `CLAUDE.md`.
 
+## Non publié
+
+**Outillage — page de suivi de projet interactive.** `docs/suivi-projet.md`
+se lit bien en revue, mal en arbitrage : un tableau de 20 lignes ne dit ni
+l'avancement, ni ce qui bloque, ni ce qui relève de quel incrément.
+
+### Ajouté
+- **`scripts/generer_suivi_html.py`** — rend le suivi Markdown en une page
+  HTML autoportante et interactive : recherche plein texte, filtres par
+  statut / priorité / intervenant, tri par colonne, compteurs et jauge
+  d'avancement **recalculés à chaque filtrage**, journal des décisions en
+  chronologie dépliable, et une **vue Incréments** (une carte par incrément,
+  avec son avancement) dès que le suivi porte la colonne `Incrément` du
+  gabarit livré en 1.1.0. Un suivi antérieur se rend à l'identique, sans
+  cette vue : les colonnes sont repérées par le **nom de leur en-tête**, pas
+  par leur position.
+- **`tests/test_generer_suivi_html.py`** (8ᵉ suite, ajoutée à la CI) —
+  couvre la lecture par nom de colonne, le caractère facultatif de la
+  colonne `Incrément`, les deux thèmes, le mode `--fragment`, l'idempotence
+  et deux non-régressions rencontrées à la mise au point (identifiant
+  suffixé pris pour un en-tête ; section en prose non convertie).
+
+### Note
+Le Markdown reste la **source de vérité** ; la page est une vue régénérée à
+la demande et n'est pas versionnée (`.gitignore`). Pas de bump de version :
+outillage de dépôt, aucun contenu de plugin modifié — l'alignement strict
+(ADR-001c) est inchangé.
+
 ## 1.1.0 — 2026-08
 **Pilotage par incréments métier recettables, et hygiène du contexte projet**
 (S-24). Deux dérives constatées sur un projet réel (`orion_agents`) : un

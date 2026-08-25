@@ -60,6 +60,7 @@ geoid-socle/
 ├── scripts/
 │   ├── packager_skill.py            empaquette un skill en .skill (canal claude.ai)
 │   ├── generer_doc_html.py          génère une fiche-outil HTML autoportante (Markdown → HTML)
+│   ├── generer_suivi_html.py        génère la page de suivi de projet interactive (filtres, incréments)
 │   ├── verifier_migration_plugin.py détecte les doublons plugin/local d'un projet (migration 0.5.0)
 │   ├── evaluer_declenchement.py     valide les jeux d'évals de déclenchement des skills
 │   └── sync_template.py             synchronise le résiduel socle → geoid_agents_template
@@ -330,9 +331,10 @@ Le mode `bypassPermissions` est réservé aux environnements isolés
   (alignement strict). Chaque projet note dans l'en-tête de son `CLAUDE.md`
   **deux champs** : version du plugin `geoid` installé (marketplace) et
   version du template résiduel mergé.
-- **Tests** (sept, `python3 tests/<nom>.py` avant push) : `test_socle_integrity`,
+- **Tests** (huit, `python3 tests/<nom>.py` avant push) : `test_socle_integrity`,
   `test_packager_skill`, `test_generer_doc_html`, `test_verifier_migration_plugin`,
-  `test_evaluer_declenchement`, `test_sync_template`, `test_hooks`. La CI
+  `test_evaluer_declenchement`, `test_sync_template`, `test_hooks`,
+  `test_generer_suivi_html`. La CI
   (`.github/workflows/tests.yml`) les rejoue à chaque push/PR, avec la
   dépendance `markdown` installée (`requirements-dev.txt`) pour qu'aucun
   test ne soit ignoré en silence.
@@ -342,6 +344,16 @@ Le mode `bypassPermissions` est réservé aux environnements isolés
   Seule dépendance tierce du socle : `pip install markdown` (le reste est
   stdlib). Usage : `python3 scripts/generer_doc_html.py --source FICHE.md
   --output FICHE.html [--diagram SCHEMA.svg]`.
+- **Outillage suivi de projet** : `scripts/generer_suivi_html.py` rend
+  `docs/suivi-projet.md` en une page HTML autoportante et **interactive** —
+  recherche, filtres par statut / priorité / intervenant, tri par colonne,
+  compteurs et jauge recalculés à chaque filtrage, et une **vue Incréments**
+  (une carte par incrément, avec son avancement) dès que le suivi porte la
+  colonne `Incrément` du gabarit 1.1.0. Un suivi antérieur se rend à
+  l'identique, sans cette vue. Le Markdown reste la source de vérité : la
+  page est une vue régénérée à la demande, et n'est pas versionnée
+  (`.gitignore`). Usage : `python3 scripts/generer_suivi_html.py --source
+  docs/suivi-projet.md --output docs/suivi-projet.html`.
 - **Avant tout push significatif** (nouvel agent, nouvelle commande,
   amendement de la CHARTE, permissions) : lancer `/geoid-meta:revue-socle` — le
   socle passe par sa propre exigence de revue. Un verdict non APPROUVÉ
